@@ -24,7 +24,7 @@ export default function Home() {
     <Box sx={{minHeight: "100vh"}}>
       <Stack spacing={2}>
         <Box sx={{width: "320px"}}>
-          <Link href="/upload" aria-label="Upload file">
+          <Link href="/data-upload" aria-label="Upload file">
             <Stack spacing={2} direction="row" sx={{ alignItems: 'center', justifyContent: "space-between", boxShadow: 2, padding: "14px"}}>
               <Typography noWrap>Upload Student Data</Typography>
               <ArrowForwardIosRoundedIcon/>
@@ -32,7 +32,7 @@ export default function Home() {
           </Link>
         </Box>
         <Box sx={{width: "320px"}}>
-          <Link href="/student-record" aria-label="Search">
+          <Link href="/student-records" aria-label="Search">
             <Stack spacing={2} direction="row" sx={{ alignItems: 'center', justifyContent: "space-between", boxShadow: 2, padding: "14px", width: "320px" }}>
               <Typography noWrap>View/Edit Student Data</Typography>
               <ArrowForwardIosRoundedIcon/>
@@ -40,7 +40,7 @@ export default function Home() {
           </Link>
         </Box>
         <Box sx={{width: "320px"}}>
-          <Link href="/download" aria-label="Download file" >
+          <Link href="/data-download" aria-label="Download file" >
             <Stack spacing={2} direction="row" sx={{ alignItems: 'center', justifyContent: "space-between", boxShadow: 2, padding: "14px", width: "320px" }}>
               <Typography noWrap>Download Data</Typography>
               <ArrowForwardIosRoundedIcon/>

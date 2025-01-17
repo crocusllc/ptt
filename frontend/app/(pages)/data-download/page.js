@@ -45,7 +45,7 @@ const DownloadDataForm = () => {
   };
 
   return (
-    <Box sx={{ padding: "16px", maxWidth: "600px", margin: "auto" }}>
+    <Box sx={{ maxWidth: "600px"}}>
       <Box sx={{ marginBottom: "16px", padding: "16px", border: "1px solid #ccc", borderRadius: "4px" }}>
         <Typography variant="h6">Download All Records:</Typography>
         <Button

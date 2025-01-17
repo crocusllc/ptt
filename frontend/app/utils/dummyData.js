@@ -21,24 +21,44 @@ export const studentEnrollmentInfo = {
   "Undergraduate Major (If GA level)": "No"
 };
 
-export const placementInfo = {
-  "Placement Type": "Student Teaching",
-  "Placement Start Date": "2025-01-15",
-  "Placement End Date": "2025-05-30",
-  "Placement Alignment": "Yes",
-  "Placement GradeLevel": "9-12",
-  "Placement Licensure Level": "Secondary",
-  "Placement Content Area": "Mathematics",
-  "Placement District": "Springfield Public Schools",
-  "Placement School": "Springfield High School",
-  "Principal Name": "Dr. Emily Carter",
-  "Principal Email": "ecarter@springfieldhigh.edu",
-  "Mentor Teacher Name": "Mr. John Smith",
-  "Mentor Teacher Email": "jsmith@springfieldhigh.edu",
-  "Additional Mentor Teacher Name": "Ms. Laura Green",
-  "Additional Mentor Teacher Email": "lgreen@springfieldhigh.edu",
-  "Notes": "Placement is focused on advanced algebra and geometry classes."
-};
+export const placementInfo = [
+  {
+    "Placement Type": "Student Teaching",
+    "Placement Start Date": "2025-01-15",
+    "Placement End Date": "2025-05-30",
+    "Placement Alignment": "Yes",
+    "Placement GradeLevel": "9-12",
+    "Placement Licensure Level": "Secondary",
+    "Placement Content Area": "Mathematics",
+    "Placement District": "Springfield Public Schools",
+    "Placement School": "Springfield High School",
+    "Principal Name": "Dr. Emily Carter",
+    "Principal Email": "ecarter@springfieldhigh.edu",
+    "Mentor Teacher Name": "Mr. John Smith",
+    "Mentor Teacher Email": "jsmith@springfieldhigh.edu",
+    "Additional Mentor Teacher Name": "Ms. Laura Green",
+    "Additional Mentor Teacher Email": "lgreen@springfieldhigh.edu",
+    "Notes": "Placement is focused on advanced algebra and geometry classes."
+  },
+  {
+    "Placement Type": "Student Teaching",
+    "Placement Start Date": "2025-01-15",
+    "Placement End Date": "2025-05-30",
+    "Placement Alignment": "Yes",
+    "Placement GradeLevel": "9-12",
+    "Placement Licensure Level": "Secondary",
+    "Placement Content Area": "Mathematics",
+    "Placement District": "Springfield Public Schools",
+    "Placement School": "Springfield High School",
+    "Principal Name": "Dr. Emily Carter",
+    "Principal Email": "ecarter@springfieldhigh.edu",
+    "Mentor Teacher Name": "Mr. John Smith",
+    "Mentor Teacher Email": "jsmith@springfieldhigh.edu",
+    "Additional Mentor Teacher Name": "Ms. Laura Green",
+    "Additional Mentor Teacher Email": "lgreen@springfieldhigh.edu",
+    "Notes": "Placement is focused on advanced algebra and geometry classes."
+  }
+];
 
 export const additionalInformation = {
   "Met on Entry": "Student Teaching",

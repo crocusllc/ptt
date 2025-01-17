@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 
 const getFullRecordLink = (params) => {
-  return <a href={`/student-record/${params.row.id}`}>View Full Record</a>;
+  return <a href={`/student-records/${params.row.id}`}>View Full Record</a>;
 };
 
 const columns = [
