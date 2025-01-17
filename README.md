@@ -1,93 +1,150 @@
-# PTT
+# PTT Educator Preparation Data Interface
 
+This document outlines the requirements and structure for the PTT Educator Preparation Data Interface,
+a web application designed to manage student data in educator preparation programs. By utilizing a centralized
+configuration file, the application ensures consistency across various components and simplifies maintenance.
 
+## Table of Contents
 
-## Getting started
+- Overview
+- Features
+- Project Structure
+- Getting Started
+- Configuration
+- Usage
+- Contributing
+- License
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## Overview
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+We are developing a React-based application with a Node.js backend and PostgreSQL database. The primary features include:
+- User authentication and role-based access control
+- CSV data upload functionality
+- Student record search and edit capabilities
+- Data export to CSV
 
-## Add your files
+The application is built using the following technologies:
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+- Backend: Node.js with Express framework
+- Frontend: React.js
+- Database: PostgreSQL
+- Containerization: Docker
+
+The core idea is to define application behavior, routes, and data models through
+a config.yaml file, allowing for flexible and scalable modifications without
+altering the core codebase.
+
+## Features
+
+### Functional
+- User Authentication
+  - login system using usernames and passwords.
+  - three user roles: administrator, editor, and viewer, plus superadmin (for bootstrap).
+  - Restrict access to the application and underlying data based on user roles. 
+- Data Upload
+  - User interface for CSV file uploads. This is restricted to the ‘Administrator’ role
+  - CSV validation (per CSV file, not across files) to ensure data integrity before import.
+  - Display clear feedback on the success or failure of the import process.
+- Maintain a log of upload activities.
+- CSV Upload Types - 3 in total:
+  - Student IHE data: A CSV file provided by the IHE IT group, containing student enrollment data from the institution's SIS.
+  - Clinical placement data: Data about clinical placements for students, provided by the EPP group.
+  - Program and Student Data: Additional data to populate the system
+- Configuration-Based: Centralized configuration for easy updates and maintenance.
+- Single Container Deployment: All components run within a single Docker container for simplified deployment.
+
+### Non-Functional
+- Security: HTTPS, password hashing, database encryption and protection against common web vulnerabilities.
+- Performance: Initial page load times under 2 seconds in normal network conditions
+- Browser Compatibility: Functionality across the latest versions of Chrome, Firefox, Safari, and Edge.
+- Mobile/Responsive
+- Accessibility: Support visual and keyboard accessibility.
+
+## Project Structure
+
+The project is organized as follows:
 
 ```
-cd existing_repo
-git remote add origin https://www.indava.dev/indava-people/ptt.git
-git branch -M main
-git push -uf origin main
+project-root/
+│
+├── backend/
+│   ├── index.js
+│   ├── package.json
+│   └── ...
+│
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── ...
+│
+├── config.yaml
+├── config_reader.py
+├── Dockerfile
+├── docker-compose.yml
+└── README.md
 ```
 
-## Integrate with your tools
+ - backend/: Contains the Node.js Express server code.
+ - frontend/: Contains the React.js application code.
+ - config.yaml: Centralized configuration file defining routes, data models, and other settings.
+ - Dockerfile: Instructions to build the Docker image.
+ - docker-compose.yml: Defines services, including the PostgreSQL database.
 
-- [ ] [Set up project integrations](https://www.indava.dev/indava-people/ptt/-/settings/integrations)
+## Getting Started
 
-## Collaborate with your team
+To set up and run the application locally, follow these steps:
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+    Clone the Repository:
 
-## Test and Deploy
+```
+git clone https://github.com/yourusername/config-based-app.git
+cd config-based-app
+```
 
-Use the built-in continuous integration in GitLab.
+Configure Environment Variables:
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+Create a .env file in the project root to define environment variables:
 
-***
+```
+POSTGRES_USER=your_db_user
+POSTGRES_PASSWORD=your_db_password
+POSTGRES_DB=your_db_name
+```
 
-# Editing this README
+Build and Run the Docker Container:
+```
+    docker-compose up --build
+```
+    This command will build the Docker image and start the application along with the PostgreSQL database.
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+    Access the Application:
 
-## Suggestions for a good README
+    Open your browser and navigate to http://localhost:3000 to access the frontend.
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+## Configuration
 
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+The config.yaml file defines the application's behavior and structure. Modifying 
+this file allows you to update routes, data models, and other settings without 
+changing the core codebase. Ensure that any changes to config.yaml are followed 
+by rebuilding the Docker image to apply the updates.
 
 ## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+   - Login: Access the login page at http://localhost:3000/login.
+   - Home Page: After logging in, you'll be redirected to the home page.
+   - Data Upload: Navigate to http://localhost:3000/upload to upload data files.
+   - Search Records: Use the search functionality on the home page to find uploaded records.
+   - Edit Data: Click on a record from the search results to edit its details.
+   - Data Export: Use the export option to download data records.
+   - Admin Page: Admins can manage users at http://localhost:3000/admin.
 
 ## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+Contributions are welcome! Please fork the repository and create a pull request
+with your changes. Ensure that your code adheres to the project's coding 
+standards and includes appropriate tests.
 
 ## License
-For open source projects, say how it is licensed.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+This project is licensed under the Apache 2 License. See the [LICENSE](https://www.apache.org/licenses/LICENSE-2.0) file for details.
