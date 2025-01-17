@@ -147,4 +147,4 @@ standards and includes appropriate tests.
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the Apache 2 License. See the [LICENSE](https://www.apache.org/licenses/LICENSE-2.0) file for details.
