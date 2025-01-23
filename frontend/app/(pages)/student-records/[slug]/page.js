@@ -9,12 +9,14 @@ import Stack from '@mui/material/Stack';
 import getConfigData from "@/app/utils/getConfigs"
 import {IconButton} from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import FormBuilder from "@/app/(pages)/student-records/[slug]/FormBuilder";
 
 export default function StudentRecord() {
   const params = useParams();
   const slug = params.slug;
 
   const [studentRecordData, setStudentRecordData] = useState();
+  const [addFormEnabled, setAddFormEnabled] = useState(false);
 
   useEffect(()=> {
     // Fetch fn here
@@ -22,7 +24,7 @@ export default function StudentRecord() {
   }, [])
 
   // Get the Student Record Config Data.
-  const formData = getConfigData()?.fields.find( el => el?.form?.name === "Student Records").form;
+  const formData = getConfigData()?.fields.find( el => el?.form?.Name === "Student Records")?.form;
   const fieldKeys =  Object.keys(formData)
   let formCategories = {}
   // Grouping fields by category
@@ -56,20 +58,25 @@ export default function StudentRecord() {
                   {catName}
                 </Box>
                 {
-                  categories[catName]?.add && (
-                    <Stack direction="row" sx={{position: "absolute", right:"6px", top:"6px", marginTop: "0 !important"}}>
-                      <IconButton aria-label="add">
+                  (categories[catName]?.addable && !addFormEnabled) && (
+                    <Stack direction="row" sx={{position: "absolute", right:"6px", top:"10px", marginTop: "0 !important"}}>
+                      <IconButton aria-label="add" onClick={()=>setAddFormEnabled(true)}>
                         <AddCircleIcon />
                       </IconButton>
                     </Stack>
                   )
                 }
                 {
+                  (categories[catName]?.addable && addFormEnabled) && (
+                    <FormBuilder formFields={formCategories[catName]} onCancel={()=>setAddFormEnabled(false)}/>
+                  )
+                }
+                {
                   studentRecordData[catName].map( (item, i) => {
                     const isMultiple = studentRecordData[catName].length > 1;
                     return (
-                      <Stack key={i} sx={{ border: `${ isMultiple ? "1px solid #ccc" : "none" }`, borderRadius: "4px", position: `${ isMultiple ? "relative" : "initial" }` }}>
-                        <CategoryManager displayData={item} formFields={formCategories[catName]} config={categories[catName]}/>
+                      <Stack key={i} sx={{ border: `${ isMultiple ? "1px solid #ccc" : "none" }`, borderRadius: "4px", position:"relative", padding:`${ isMultiple ? "10px" : 0 }` }}>
+                        <CategoryManager displayData={item} formData={formCategories[catName]} config={categories[catName]} />
                       </Stack>
                     )
                   })

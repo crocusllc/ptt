@@ -1,23 +1,22 @@
 import {IconButton, Stack} from "@mui/material";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
 import Box from "@mui/material/Box";
 import {useState} from "react";
 import EditIcon from "@mui/icons-material/Edit";
+import FormBuilder from "@/app/(pages)/student-records/[slug]/FormBuilder";
 
-export default function CategoryManager({displayData, formFields, config}) {
-  console.log(config)
+export default function CategoryManager({displayData, formData, config}) {
   const [editMode, setEditMode] = useState(false);
 
   return (
     editMode
-      ? <div>Acá el form</div>
+      ? <FormBuilder formFields={formData} onCancel={()=>setEditMode(false)} defaultData={displayData}/>
       : (
         Object.keys(displayData).map( (el, i) => {
           return(
             <Stack spacing={1} key={i}>
-              <Stack direction="row" spacing={1} sx={{position: "absolute", right:"6px", top:"6px"}}>
+              <Stack direction="row" spacing={1} sx={{position: "absolute", right:"6px", top:"4px"}}>
                 {
-                  config?.edit && (
+                  config?.editable && (
                     <IconButton aria-label="edit" onClick={()=> setEditMode(true)}>
                       <EditIcon />
                     </IconButton>
