@@ -26,14 +26,15 @@ export const student_record_info = {
   "Culminating Clinical Placement": [
     {
       "Placement Type": "Student Teaching",
+      "Registered Apprentice": "Yes",
       "Placement Start Date": "2025-01-15",
       "Placement End Date": "2025-05-30",
       "Placement Alignment": "Yes",
-      "Placement GradeLevel": "9-12",
-      "Placement Licensure Level": "Secondary",
+      "Placement Grade Level": "9-12",
+      "Placement Licensure Level": "Secondary 7-12",
       "Placement Content Area": "Mathematics",
       "Placement District": "Springfield Public Schools",
-      "Placement School": "Springfield High School",
+      "Placement School": "Springfield General Hospital",
       "Principal Name": "Dr. Emily Carter",
       "Principal Email": "ecarter@springfieldhigh.edu",
       "Mentor Teacher Name": "Mr. John Smith",
@@ -44,14 +45,15 @@ export const student_record_info = {
     },
     {
       "Placement Type": "Student Teaching",
+      "Registered Apprentice": "Yes",
       "Placement Start Date": "2025-01-15",
       "Placement End Date": "2025-05-30",
       "Placement Alignment": "Yes",
-      "Placement GradeLevel": "9-12",
-      "Placement Licensure Level": "Secondary",
+      "Placement Grade Level": "9-12",
+      "Placement Licensure Level": "PreK-3",
       "Placement Content Area": "Mathematics",
-      "Placement District": "Springfield Public Schools",
-      "Placement School": "Springfield High School",
+      "Placement District": "Another example school",
+      "Placement School": "Riverview Nursing Academy",
       "Principal Name": "Dr. Emily Carter",
       "Principal Email": "ecarter@springfieldhigh.edu",
       "Mentor Teacher Name": "Mr. John Smith",
@@ -63,16 +65,17 @@ export const student_record_info = {
   ],
   "Additional Program Information": [
     {
-      "Met on Entry": "Student Teaching",
-      "If no, please explain": "Lorem ipsum",
-      "Program Completion Status": "2025-05-30",
-      "Program Completion Notes": "Yes",
+      "Licensure Program Requirements Met on Entry": "Yes",
+      "If no, please explain": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent diam ante, porta ut vulputate posuere, cursus a diam. Donec sollicitudin non mauris dictum sodales.",
+      "Program Completion Status": "Complete",
+      "Program Completion Notes": "Lorem ipsum",
     }
   ],
   "Additional Student Information": [
     {
-      "If you select other please specify": "Student Teaching",
-      "First-Generation Status": "Lorem ipsum",
+      "Language(s) Spoken Other Than English": "Zuni",
+      "If you selected other, please specify": "",
+      'First Generation Status': "Unknown",
       "Licensure #": "2025-05-30",
     }
   ],
