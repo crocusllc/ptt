@@ -80,3 +80,8 @@ export const student_record_info = {
     }
   ],
 }
+
+export const userData= {
+  name: "Jhon Doe",
+  role: "Admin"
+}
