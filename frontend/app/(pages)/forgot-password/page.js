@@ -7,22 +7,16 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 
 import {useState} from "react";
-import Link from "next/link";
 
-export default function LoginPage() {
-
+export default function ForgotPass() {
   const [emailError, setEmailError] = useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = useState('');
-  const [passwordError, setPasswordError] = useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
-
   const validateInputs = () => {
     const email = document.getElementById('email');
-    const password = document.getElementById('password');
 
     let isValid = true;
 
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+    if (!email.value || !/\S+@\S+\.\S+/.test(email?.value)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
       isValid = false;
@@ -31,28 +25,15 @@ export default function LoginPage() {
       setEmailErrorMessage('');
     }
 
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 6 characters long.');
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage('');
-    }
     return isValid;
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (emailError || passwordError) {
+    if (emailError) {
       return;
     }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      name: data.get('name'),
-      lastName: data.get('lastName'),
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const data = new FormData(e.currentTarget);
+    console.log(data);
   };
 
   return (
@@ -60,7 +41,7 @@ export default function LoginPage() {
       <Card sx={{ maxWidth: 480, width: "80%" }}>
         <CardContent>
           <Typography gutterBottom component="h2" sx={{fontSize: "22px", marginBottom: "18px"}}>
-            Log In
+            Forgot Password
           </Typography>
           <Box
             component="form"
@@ -82,24 +63,7 @@ export default function LoginPage() {
                 color={emailError ? 'error' : 'primary'}
               />
             </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="password">Password</FormLabel>
-              <TextField
-                required
-                fullWidth
-                name="password"
-                placeholder="••••••"
-                type="password"
-                id="password"
-                autoComplete="new-password"
-                variant="outlined"
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                color={passwordError ? 'error' : 'primary'}
-              />
-            </FormControl>
-            <Box sx={{display: "flex", justifyContent: "space-between"}}>
-              <Link href="/forgot-password">Forgot password?</Link>
+            <Box sx={{display: "flex", justifyContent: "flex-end"}}>
               <Button
                 sx={{maxWidth: "200px"}}
                 type="submit"
@@ -107,13 +71,12 @@ export default function LoginPage() {
                 variant="contained"
                 onClick={validateInputs}
               >
-                Sign up
+                Send
               </Button>
             </Box>
           </Box>
         </CardContent>
       </Card>
-
     </Box>
 
   );
