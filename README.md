@@ -85,7 +85,7 @@ project-root/
 └── README.md
 ```
 
- - backend/: Contains the Node.js Express server code.
+ - backend/: Contains the Python/Flask server code.
  - frontend/: Contains the React.js application code.
  - config.yaml: Centralized configuration file defining routes, data models, and other settings.
  - Dockerfile: Instructions to build the Docker image.
@@ -98,21 +98,26 @@ To set up and run the application locally, follow these steps:
     Clone the Repository:
 
 ```
-git clone https://github.com/yourusername/config-based-app.git
-cd config-based-app
+git clone https://www.indava.dev/indava-people/ptt.git
+cd ptt
 ```
 
-Configure Environment Variables:
+## Configuration
 
-Create a .env file in the project root to define environment variables:
+The config.yaml file defines the application's behavior and structure. Modifying 
+this file allows you to update routes, data models, and other settings without 
+changing the core codebase. Ensure that any changes to config.yaml are followed 
+by rebuilding the Docker image to apply the updates.
+
+1. check that the credentials in the config.yaml file are the same as those in the Docker file
+2. Edit the fields you want to show in the student information form
+3. run `generate_app.py` to generate the API.
 
 ```
-POSTGRES_USER=your_db_user
-POSTGRES_PASSWORD=your_db_password
-POSTGRES_DB=your_db_name
+python read_config.py --config config.yaml --template app_template.jinja2 --output ptt_api.py
 ```
 
-Build and Run the Docker Container:
+4. Build and Run the Docker Container:
 ```
     docker-compose up --build
 ```
@@ -122,12 +127,7 @@ Build and Run the Docker Container:
 
     Open your browser and navigate to http://localhost:3000 to access the frontend.
 
-## Configuration
 
-The config.yaml file defines the application's behavior and structure. Modifying 
-this file allows you to update routes, data models, and other settings without 
-changing the core codebase. Ensure that any changes to config.yaml are followed 
-by rebuilding the Docker image to apply the updates.
 
 ## Usage
 
