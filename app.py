@@ -74,15 +74,89 @@ def create_app():
             app.config["SECRET_KEY"],
             algorithm="HS256"
         )
-        cur = conn.cursor()
-        cur.execute("SELECT version();")
-        db_version = cur.fetchone()
-        cur.close()
+        return jsonify({"token": token})
+
+    # ========== FILE UPLOAD ENDPOINT ==========
+    @app.route("/file_upload", methods=["POST"])
+    @login_required(role_required=["admin", "editor"])
+    def file_upload():
+        data = request.get_json() or {}
+        file_name = data.get("file_name")
+        table_name = data.get("table_name")
+        fields = data.get("fields", [])
+        file_content = request.files.get("file")
+
+        if not file_name or not table_name or not fields or not file_content:
+            return jsonify({"error": "Missing file_name, table_name, fields, or file"}), 400
+        
+        # Read file content
+        stream = io.StringIO(file_content.stream.read().decode("utf-8"))
+        csv_reader = csv.DictReader(stream)
+
+        if table_name not in ["student_info", "program_info", "clinical_placement_info"]:
+            return jsonify({"error": "Invalid table_name"}), 400
+        
+        table = metadata.tables.get(table_name)
+        if not table:
+            return jsonify({"error": "Table not found"}), 400
+
+        rows_to_insert = []
+        for row in csv_reader:
+            row_data = {field: row[field] for field in fields if field in row}
+            rows_to_insert.append(row_data)
+
+        conn = engine.connect()
+        conn.execute(table.insert(), rows_to_insert)
         conn.close()
-        return f"Hello, World! PostgreSQL version: {db_version}"
-    except Exception as e:
-        return f"Error connecting to DB: {e}"
+        
+        return jsonify({"message": "File uploaded successfully", "file_name": file_name, "table_name": table_name})
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+ # ========== FILE DOWNLOAD ENDPOINT ==========
+    @app.route("/file_download", methods=["POST"])
+    @login_required(role_required=["admin", "viewer"])
+    def file_download():
+        data = request.get_json() or {}
+        file_name = data.get("file_name")
+        fields = data.get("fields", [])
 
+        if not file_name or not fields:
+            return jsonify({"error": "Missing file_name or fields"}), 400
+
+        conn = engine.connect()
+        sel = student_table.select().with_only_columns([student_table.c[field] for field in fields if field in student_table.c])
+        results = conn.execute(sel).fetchall()
+        conn.close()
+
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(fields)
+        for row in results:
+            writer.writerow([row[field] for field in fields])
+        
+        output.seek(0)
+        return send_file(
+            io.BytesIO(output.getvalue().encode("utf-8")),
+            mimetype="text/csv",
+            as_attachment=True,
+            download_name=file_name
+        )
+
+    # ========== STUDENT RECORD ENDPOINT ==========
+    @app.route("/student_record", methods=["GET"])
+    @login_required(role_required=["admin", "viewer"])
+    def student_record():
+        student_id = request.args.get("student_id")
+        conn = engine.connect()
+        sel = student_table.select()
+        if student_id:
+            sel = sel.where(student_table.c.id == int(student_id))
+        results = conn.execute(sel).fetchall()
+        conn.close()
+
+        return jsonify([dict(row) for row in results])
+
+    return app
+
+if __name__ == "__main__":
+    app = create_app()
+    app.run(debug=True, port=5000, host="0.0.0.0")
