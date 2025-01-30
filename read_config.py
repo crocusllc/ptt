@@ -162,7 +162,10 @@ def main():
         choices=["app", "csv", "db"],
         help="Choose the mode of operation: app, csv, or db"
     )
-
+    parser.add_argument(
+        "--output",
+        help="Output name for app"
+    )
     args = parser.parse_args()
  
 
