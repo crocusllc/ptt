@@ -203,7 +203,7 @@ def main():
         # 3. Render the template
         jinja_env = jinja2.Environment()
         template = jinja_env.from_string(template_str)
-        rendered_code = template.render(PG_USER=pguser, PG_DB=pgdb, PG_PORT=pgport PG_PWD=pgpwd, PG_HOST=pghost, SECRET_KEY=secretkey)
+        rendered_code = template.render(PG_USER=pguser, PG_DB=pgdb, PG_PORT=pgport, PG_PWD=pgpwd, PG_HOST=pghost, SECRET_KEY=secretkey)
 
         # 4. Write to the output file
         with open(args.output, "w", encoding="utf-8") as out_file:
