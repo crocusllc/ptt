@@ -10,7 +10,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from passlib.hash import bcrypt
 from functools import wraps
-from database_setup import setup_database  # Import database setup logic
 
 def create_app():
     app = Flask(__name__)
@@ -21,8 +20,6 @@ def create_app():
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    # Initialize database tables and metadata
-    metadata, users_table, student_table, field_list = setup_database(engine, session)
 
     # ========== AUTH DECORATOR ==========
     def login_required(role_required=None):
