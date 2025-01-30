@@ -14,20 +14,20 @@ def parse_config(config_path):
         docs = list(yaml.safe_load_all(f))
     for i, doc in enumerate(docs, start=1): 
         if doc.get('fields'):
-            form = doc.get("fields",[])
-            print(form)
-            form_def = form.get("form", {})
-            api_name = form_def.get("API_Name")
-            # Build field_list by iterating over all 'field-*' entries
-            field_list = []
-            for key, value in form_def.items():
-               if key.startswith("field-"):
-                    field_info = {
-                        "csv_name": value.get("CSV column name"),
-                        "type": value.get("Type", "text"),  # default to 'text' if missing
-                        "required_field": value.get("Required field", False),
-                        "dropdown_values": value.get("Dropdown or validation values", ""),
-                        "include_in_download": value.get("Include in download file", False),
+            for form in doc.get('fields'):
+                aform = doc.get("fields",[])
+                form_def = form.get("form", [])
+                api_name = form_def.get("API_Name")
+                # Build field_list by iterating over all 'field-*' entries
+                field_list = []
+                for key, value in form_def.items():
+                    if key.startswith("field-"):
+                        field_info = {
+                            "csv_name": value.get("CSV column name"),
+                            "type": value.get("Type", "text"),  # default to 'text' if missing
+                            "required_field": value.get("Required field", False),
+                            "dropdown_values": value.get("Dropdown or validation values", ""),
+                            "include_in_download": value.get("Include in download file", False),
                     }
         else:
             pass
