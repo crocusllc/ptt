@@ -8,6 +8,13 @@ import os
 import subprocess
 from cryptography.fernet import Fernet
 
+def parse_yaml(config_path):
+    """Load and parse the given YAML, returning a dict of required info."""
+    with open(config_path, "r") as f:
+        docs = list(yaml.safe_load_all(f))
+
+    return docs
+
 def parse_config(config_path):
     """Load and parse the given YAML config file, returning a dict of required info."""
     with open(config_path, "r") as f:
@@ -72,7 +79,7 @@ def create_csv(fields):
     filenames = ['student_data.csv', 'clinical_placement_data.csv', 'additional_program_student_data.csv']
     headers = [student_headers, clinical_headers, additional_headers]
     for filename, headers in zip(filenames, headers):
-       with open(filename, 'w', newline='') as csvfile:
+       with open("frontend/public/docs/" + filename, 'w', newline='') as csvfile:
           writer = csv.writer(csvfile)
           writer.writerow(headers)
     print("CSV files for bulk upload have been created.")
@@ -168,7 +175,6 @@ def main():
     )
     args = parser.parse_args()
  
-
     if args.mode == 'csv': 
         fields = parse_config_for_csv(args.config)
         create_csv(fields)
@@ -184,10 +190,20 @@ def main():
         with open(args.template, "r", encoding="utf-8") as f:
             template_str = f.read()
 
+        compose_file = parse_yaml('docker-compose.yml')
+        file_args = compose_file[0]['services']['api']['build']['args']
+
+        pguser=file_args['PG_USER']
+        pgdb=file_args['PG_DB']
+        pgpwd=file_args['PG_PWD']
+        pgport=file_args['PG_PORT']
+        pghost=file_args['PG_HOST']
+        secretkey=file_args['SECRET_KEY']
+
         # 3. Render the template
         jinja_env = jinja2.Environment()
         template = jinja_env.from_string(template_str)
-        rendered_code = template.render(parsed_config=config_data)
+        rendered_code = template.render(PG_USER=pguser, PG_DB=pgdb, PG_PORT=pgport, PG_PWD=pgpwd, PG_HOST=pghost, SECRET_KEY=secretkey)
 
         # 4. Write to the output file
         with open(args.output, "w", encoding="utf-8") as out_file:
