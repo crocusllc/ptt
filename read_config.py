@@ -93,8 +93,10 @@ def parse_config_for_db(config_path):
         docs = list(yaml.safe_load_all(f))
 
     for doc in docs:
-        if 'fields' in doc and 'form' in doc['fields']:
-            form_def = doc['fields']['form']
+        
+        if 'fields' in doc.keys():#and 'form' in doc['fields']:
+            form_def = doc['fields'][0]['form']
+
             for key, value in form_def.items():
                 if key.startswith("field-"):
                     field_list.append((value.get("CSV column name"), value.get("Category"), value.get("Type")))
