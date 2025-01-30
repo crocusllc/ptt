@@ -4,25 +4,42 @@ import csv
 import io
 import jwt
 import datetime
-
+import psycopg2
 from flask import Flask, request, jsonify, send_file
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from passlib.hash import bcrypt
 from functools import wraps
-from database_setup import setup_database  # Import database setup logic
 
 def create_app():
     app = Flask(__name__)
     app.config["SECRET_KEY"] = "SUPER-SECRET"
 
     # Set up DB engine
-    engine = create_engine("postgresql+psycopg2://YOUR_USERNAME:YOUR_PASSWORD@YOUR_HOST:5433/YOUR_DBNAME", echo=False)
+    engine = create_engine("postgresql+psycopg2://postgres:postgres@YOUR_HOST:5433/ptt_db", echo=False)
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    # Initialize database tables and metadata
-    metadata, users_table, student_table, field_list = setup_database(engine, session)
+    @app.route('/')
+    def hello():
+        # Simple health check or DB connection check
+        try:
+            conn = psycopg2.connect(
+                dbname="ptt_db",
+                user="postgres",
+                password="postgres",
+                host="127.0.0.1",
+                port="5433"
+            )
+            cur = conn.cursor()
+            cur.execute("SELECT version();")
+            db_version = cur.fetchone()
+            cur.close()
+            conn.close()
+            return f"Hello, World! PostgreSQL version: {db_version}"
+        except Exception as e:
+            return f"Error connecting to DB: {e}"
+
 
     # ========== AUTH DECORATOR ==========
     def login_required(role_required=None):
