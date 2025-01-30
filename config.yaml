@@ -27,7 +27,7 @@ categories:
 
 --- # fields
 fields:
-   form:
+  - form:
       Name: Student Records
       API_Name: "student_record_info"
       field-1:
