@@ -1,0 +1,18 @@
+services:
+  api:
+    build:
+      context: .
+      args: 
+        PG_USER: postgres
+        PG_PWD: postgres
+        PG_DB: ptt_db
+        PG_PORT: 5432
+        PG_HOST: localhost
+        SECRET_KEY: SUPER_SECRET
+    ports:
+      - 5432
+      - 5000
+  app:
+    build: frontend
+    ports:
+      - 3000

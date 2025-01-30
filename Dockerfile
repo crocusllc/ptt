@@ -1,6 +1,12 @@
 # Use a lightweight Python base image
 FROM python:3.9-slim
 
+# Define arguments for the database
+ARG PG_USER
+ARG PG_PWD
+ARG PG_DB
+ARG PG_PORT
+
 # Install Postgres and supervisor
 RUN apt-get update && apt-get install -y \
     postgresql-15 \
@@ -16,10 +22,10 @@ WORKDIR /app
 COPY app.py /app/
 
 # Set environment variables for Postgres
-ENV POSTGRES_USER=postgres
-ENV POSTGRES_PASSWORD=postgres
-ENV POSTGRES_DB=ptt_db
-ENV POSTGRES_PORT=5433
+ENV POSTGRES_USER=$PG_USER
+ENV POSTGRES_PASSWORD=$PG_PWD
+ENV POSTGRES_DB=$PG_DB
+ENV POSTGRES_PORT=$PG_PORT
 
 # Create Postgres data directory (not declared as a volume)
 RUN mkdir -p /var/lib/postgresql/data \
@@ -29,11 +35,10 @@ RUN mkdir -p /var/lib/postgresql/data \
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Expose the Flask port (5000) and Postgres port (5432)
-EXPOSE 5000 5433
+EXPOSE 5000 $PG_PORT
 
 # Switch to the postgres user to initialize the DB
-USER postgres
-
+USER $PG_USER
 
 # Initialize the database cluster & create DB
 RUN /usr/lib/postgresql/15/bin/initdb -D /var/lib/postgresql/data
@@ -44,16 +49,16 @@ COPY backend/sql/ /scripts/
 
 RUN /usr/lib/postgresql/15/bin/pg_ctl \
     -D /var/lib/postgresql/data \
-    -o "-p 5433" \
+    -o "-p ${PG_PORT}" \
     -l /var/lib/postgresql/data/logfile \
     start \
-&& createdb -p 5433 ptt_db \
-&& psql -U postgres -p 5433 -d ptt_db -f /scripts/users_ddl.sql \
-&& psql -U postgres -p 5433 -d ptt_db -f /scripts/logs_ddl.sql \
+&& createdb -p $PG_PORT $PG_DB \
+&& psql -U $PG_USER -p $PG_PORT -d $PG_DB -f /scripts/users_ddl.sql \
+&& psql -U $PG_USER -p $PG_PORT -d $PG_DB -f /scripts/logs_ddl.sql \
 #&& psql -U postgres -d ptt_db -f /scripts/student_info.sql \
 && /usr/lib/postgresql/15/bin/pg_ctl \
   -D /var/lib/postgresql/data \
-  -o "-p 5433" \
+  -o "-p ${PG_PORT}" \
   stop
 
 # Switch back to root so supervisor can manage processes
