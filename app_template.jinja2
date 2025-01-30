@@ -6,10 +6,37 @@ import jwt
 import datetime
 import psycopg2
 from flask import Flask, request, jsonify, send_file
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 from passlib.hash import bcrypt
 from functools import wraps
+
+
+def setup_db_connection():
+    """Set up database connection using credentials from config.yaml."""
+    db_config = get_database_config()
+    
+    # Create database connection string
+    db_url = (f"postgresql+psycopg2://{db_config['user']}:{db_config['password']}"
+              f"@{db_config['host']}:{db_config['port']}/{db_config['name']}")
+    
+    # Initialize SQLAlchemy engine and session
+    engine = create_engine(db_url, echo=False)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    
+    # Reflect existing database tables
+    metadata = MetaData()
+    metadata.reflect(bind=engine)
+    
+    # Retrieve users table explicitly
+    users_table = metadata.tables.get("users")
+    if users_table is None:
+        raise ValueError("Users table not found in the database schema.")
+    
+    return engine, session, metadata, users_table
+
+    return engine, session, metadata, users_table
 
 def create_app():
     app = Flask(__name__)
@@ -72,7 +99,6 @@ def create_app():
         password = data.get("password")
         if not username or not password:
             return jsonify({"error": "Missing username/password"}), 400
-
         user = session.execute(users_table.select().where(users_table.c.username == username)).fetchone()
         if not user:
             return jsonify({"error": "Invalid username or password"}), 401
