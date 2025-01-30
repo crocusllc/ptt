@@ -79,7 +79,7 @@ def create_csv(fields):
     filenames = ['student_data.csv', 'clinical_placement_data.csv', 'additional_program_student_data.csv']
     headers = [student_headers, clinical_headers, additional_headers]
     for filename, headers in zip(filenames, headers):
-       with open(filename, 'w', newline='') as csvfile:
+       with open("frontend/public/docs/" + filename, 'w', newline='') as csvfile:
           writer = csv.writer(csvfile)
           writer.writerow(headers)
     print("CSV files for bulk upload have been created.")
