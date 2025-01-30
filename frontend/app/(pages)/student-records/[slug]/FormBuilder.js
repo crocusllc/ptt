@@ -23,8 +23,6 @@ export default function FormBuilder({formFields, onCancel, defaultData}) {
     <Stack spacing={1} component="form" sx={{ p: 4 }} onSubmit={handleSubmit}>
       {
         formFields.map( (field, i)=> {
-          console.log(field["Required field"])
-          console.log(field)
           if (field?.Type === "select") {
             return (
               <FormControl variant="filled" fullWidth key={i} required={field["Required field"]}>
