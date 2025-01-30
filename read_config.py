@@ -8,6 +8,32 @@ import os
 import subprocess
 from cryptography.fernet import Fernet
 
+def parse_config(config_path):
+    """Load and parse the given YAML config file, returning a dict of required info."""
+    with open(config_path, "r") as f:
+        docs = list(yaml.safe_load_all(f))
+    for i, doc in enumerate(docs, start=1): 
+        if doc.get('fields'):
+            form = doc.get("fields",[])
+            print(form)
+            form_def = form.get("form", {})
+            api_name = form_def.get("API_Name")
+            # Build field_list by iterating over all 'field-*' entries
+            field_list = []
+            for key, value in form_def.items():
+               if key.startswith("field-"):
+                    field_info = {
+                        "csv_name": value.get("CSV column name"),
+                        "type": value.get("Type", "text"),  # default to 'text' if missing
+                        "required_field": value.get("Required field", False),
+                        "dropdown_values": value.get("Dropdown or validation values", ""),
+                        "include_in_download": value.get("Include in download file", False),
+                    }
+        else:
+            pass
+       
+    return {"api_name": api_name, "field_list": field_list}
+
 def parse_config_for_csv(config_path):
     """Load and parse the given YAML config file, returning a dict of required info."""
     field_list = []
@@ -43,9 +69,6 @@ def create_csv(fields):
             clinical_headers.append(field[0])
         elif field[1] == 'Additional Program Information' or 'Additional Student Information':
             additional_headers.append(field[0])
-    print(student_headers)
-    print(clinical_headers)
-    print(additional_headers)
     filenames = ['student_data.csv', 'clinical_placement_data.csv', 'additional_program_student_data.csv']
     headers = [student_headers, clinical_headers, additional_headers]
     for filename, headers in zip(filenames, headers):
@@ -107,8 +130,7 @@ def create_sql_files(fields):
     # Generate SQL scripts
     sql_statements = {}
     for table_name, columns in tables.items():
-        sql_statements[table_name] = f"""CREATE TABLE {table_name} (id SERIAL PRIMARY KEY,{",\n            ".join(columns)}
-        );"""
+        sql_statements[table_name] = f"""CREATE TABLE {table_name} (id SERIAL PRIMARY KEY,{",".join(columns)});"""
 
     # Save SQL scripts to files
     for table_name, sql in sql_statements.items():
@@ -150,7 +172,7 @@ def main():
     elif args.mode == 'db':
         # Create the student table
         fields = parse_config_for_db(args.config)
-        create_db(fields)
+        create_sql_files(fields)
     elif args.mode == 'app':    
         # 1. Parse the config
         config_data = parse_config(args.config)
@@ -168,7 +190,7 @@ def main():
         with open(args.output, "w", encoding="utf-8") as out_file:
            out_file.write(rendered_code)
 
-    print(f"Generated {args.output} from {args.config} using template {args.template}!")
+        print(f"Generated {args.output} from {args.config} using template {args.template}!")
 
 if __name__ == "__main__":
     main()
