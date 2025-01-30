@@ -11,7 +11,6 @@ from sqlalchemy.orm import sessionmaker
 from passlib.hash import bcrypt
 from functools import wraps
 
-
 def setup_db_connection():
     """Set up database connection using credentials from config.yaml."""
     db_config = get_database_config()
@@ -34,8 +33,6 @@ def setup_db_connection():
     if users_table is None:
         raise ValueError("Users table not found in the database schema.")
     
-    return engine, session, metadata, users_table
-
     return engine, session, metadata, users_table
 
 def create_app():
