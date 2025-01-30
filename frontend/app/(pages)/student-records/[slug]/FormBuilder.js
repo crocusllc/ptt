@@ -11,7 +11,6 @@ export default function FormBuilder({formFields, onCancel, defaultData}) {
     Object.fromEntries(formFields.map(field => [field["CSV column name"], defaultData?.[field["Data element label"]] ?? '']))
   );
 
-  console.log(formData)
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form Data Submitted:", formData);
@@ -24,9 +23,11 @@ export default function FormBuilder({formFields, onCancel, defaultData}) {
     <Stack spacing={1} component="form" sx={{ p: 4 }} onSubmit={handleSubmit}>
       {
         formFields.map( (field, i)=> {
+          console.log(field["Required field"])
+          console.log(field)
           if (field?.Type === "select") {
             return (
-              <FormControl variant="filled" fullWidth key={i}>
+              <FormControl variant="filled" fullWidth key={i} required={field["Required field"]}>
                 <InputLabel id={`${[field['CSV column name']]}-label`}>
                   {field['Data element label']}
                 </InputLabel>
@@ -36,6 +37,7 @@ export default function FormBuilder({formFields, onCancel, defaultData}) {
                   value={formData[field['CSV column name']]}
                   label={field['Data element label']}
                   onChange={(e) => handleChange(field['CSV column name'], e.target.value)}
+                  multiple={field["multi-select"]}
                 >
                   {
                     field['Dropdown or validation values']?.split(",").map( (opt, i) => <MenuItem key={i} value={opt}>{opt}</MenuItem>)
@@ -45,7 +47,7 @@ export default function FormBuilder({formFields, onCancel, defaultData}) {
             )
           } else if( field?.Type === "text") {
             return (
-              <TextField key={i} id={field['CSV column name']}  defaultValue={formData[field['CSV column name']]} label={field['Data element label']} variant="filled" />
+              <TextField key={i} id={field['CSV column name']} required={field["Required field"]} defaultValue={formData[field['CSV column name']]} label={field['Data element label']} variant="filled" />
             )
           } else if( field?.Type === "date") {
             return (

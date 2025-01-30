@@ -2,6 +2,7 @@
 
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
+import getConfigData from "@/app/utils/getConfigs"
 
 const getFullRecordLink = (params) => {
   return <a href={`/student-records/${params.row.id}`}>View Full Record</a>;
@@ -171,6 +172,38 @@ const rows = [
 ];
 
 export default function StudentRecords() {
+  const studentRecordFormFields = getConfigData()?.fields
+    ?.find( el => el?.form?.Name === "Student Records")?.form;
+
+  const studentRecordKeys = Object.keys(studentRecordFormFields);
+
+  let gridFields = [];
+
+  studentRecordKeys.forEach( el => {
+    if(studentRecordFormFields[el]['Display on Student Record page?'] === true){
+      gridFields.push(studentRecordFormFields[el])
+    }
+  });
+
+
+  const gridColumns = [
+    {
+      field: 'id',
+      headerName: 'Student ID',
+      width: 90,
+    },
+    ...gridFields.map( field => ({
+      field: field['CSV column name'],
+      headerName: field['Data element label'],
+      width: 150,
+    })),
+    {
+      field: 'editUrl',
+      headerName: 'View/Edit',
+      width: 200,
+      renderCell: getFullRecordLink,
+    }
+  ];
 
   const numberRows = 15;
 

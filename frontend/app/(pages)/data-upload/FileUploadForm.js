@@ -26,6 +26,13 @@ const FileUpload = ({title}) => {
       </Typography>
       <TextField
         type="file"
+        slotProps={{
+          input: {
+            inputProps: {
+              accept: ".csv"
+            },
+          },
+        }}
         variant="outlined"
         size="small"
         fullWidth
