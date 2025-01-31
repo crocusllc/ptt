@@ -45,6 +45,10 @@ export default function StudentRecord() {
 
   const categories = getConfigData()?.categories;
 
+  const handleSubmit = (data) => {
+    alert("Submitted data: " + JSON.stringify(data));
+  };
+
   return (
     <>
       <h1>Student ID #: {slug}</h1>
@@ -68,7 +72,7 @@ export default function StudentRecord() {
                 }
                 {
                   (categories[catName]?.addable && addFormEnabled) && (
-                    <FormBuilder formFields={formCategories[catName]} onCancel={()=>setAddFormEnabled(false)}/>
+                    <FormBuilder formFields={formCategories[catName]} onCancel={()=>setAddFormEnabled(false)} onSubmit={handleSubmit}/>
                   )
                 }
                 {

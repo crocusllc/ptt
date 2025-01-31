@@ -13,35 +13,31 @@ import {
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import getConfigData from "@/app/utils/getConfigs";
+import FormBuilder from "@/app/(pages)/student-records/[slug]/FormBuilder";
 
 
 const DownloadDataForm = () => {
-  const [filters, setFilters] = useState({
-    graduationTerm: "",
-    exitDate: "",
-    enrollmentStatus: "",
-    academicLevel: "",
-    programName: "",
-    completionStatus: "",
-    placementType: "",
-    placementDistrict: "",
-    placementSchool: "",
-    startDate: null,
-    endDate: null,
-  });
+  const studentRecordFormFields = getConfigData()?.fields
+    ?.find( el => el?.form?.Name === "Student Records")?.form;
 
-  // Handle changes in dropdowns and text fields
-  const handleChange = (field, value) => {
-    setFilters((prev) => ({ ...prev, [field]: value }));
-  };
+  const studentRecordKeys = Object.keys(studentRecordFormFields);
+
+  let downLoadFormFields = [];
+
+  studentRecordKeys.forEach( el => {
+    if(studentRecordFormFields[el]['Use as filter on Download page?']){
+      downLoadFormFields.push(studentRecordFormFields[el])
+    }
+  });
 
   // Handle download actions
   const handleDownloadAll = () => {
     alert("Downloading all records...");
   };
 
-  const handleDownloadSelected = () => {
-    alert("Downloading selected records with filters: " + JSON.stringify(filters));
+  const handleDownloadSelected = (data) => {
+    alert("Downloading selected records with filters: " + JSON.stringify(data));
   };
 
   return (
@@ -62,69 +58,8 @@ const DownloadDataForm = () => {
         <Typography variant="h6" gutterBottom>
           Download Selected Records:
         </Typography>
-        <Stack spacing={2}>
-          {[
-            { label: "IHE Expected Graduation Term", field: "graduationTerm" },
-            { label: "IHE Exit Date", field: "exitDate" },
-            { label: "IHE Enrollment Status", field: "enrollmentStatus" },
-            { label: "Academic Level", field: "academicLevel" },
-            { label: "Program Name", field: "programName" },
-            { label: "Program Completion Status", field: "completionStatus" },
-            { label: "Placement Type", field: "placementType" },
-            { label: "Placement District", field: "placementDistrict" },
-            { label: "Placement School", field: "placementSchool" },
-          ].map((dropdown) => (
-            <Box key={dropdown.field}>
-              <Typography variant="body2" sx={{ marginBottom: "4px" }}>
-                {dropdown.label}:
-              </Typography>
-              <Select
-                fullWidth
-                value={filters[dropdown.field]}
-                onChange={(e) => handleChange(dropdown.field, e.target.value)}
-                displayEmpty
-              >
-                <MenuItem value="">Select</MenuItem>
-                <MenuItem value="Option1">Option 1</MenuItem>
-                <MenuItem value="Option2">Option 2</MenuItem>
-              </Select>
-            </Box>
-          ))}
 
-          <Box>
-            <Typography variant="body2" sx={{ marginBottom: "4px" }}>
-              Placement Occurred Between:
-            </Typography>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <DatePicker
-                    value={filters.startDate}
-                    onChange={(date) => handleChange("startDate", date)}
-                    renderInput={(params) => <TextField {...params} fullWidth />}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <DatePicker
-                    value={filters.endDate}
-                    onChange={(date) => handleChange("endDate", date)}
-                    renderInput={(params) => <TextField {...params} fullWidth />}
-                  />
-                </Grid>
-              </Grid>
-            </LocalizationProvider>
-          </Box>
-        </Stack>
-
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          onClick={handleDownloadSelected}
-          sx={{ marginTop: "16px" }}
-        >
-          Download
-        </Button>
+        <FormBuilder formFields={downLoadFormFields} submitBtnTxt={"Download"} onSubmit={handleDownloadSelected}/>
       </Box>
     </Box>
   );

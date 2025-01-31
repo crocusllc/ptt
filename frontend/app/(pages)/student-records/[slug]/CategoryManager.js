@@ -7,9 +7,13 @@ import FormBuilder from "@/app/(pages)/student-records/[slug]/FormBuilder";
 export default function CategoryManager({displayData, formData, config}) {
   const [editMode, setEditMode] = useState(false);
 
+  const handleSubmit = (data) => {
+    alert("Submitted data: " + JSON.stringify(data));
+  };
+
   return (
     editMode
-      ? <FormBuilder formFields={formData} onCancel={()=>setEditMode(false)} defaultData={displayData}/>
+      ? <FormBuilder formFields={formData} onCancel={()=>setEditMode(false)} defaultData={displayData} onSubmit={handleSubmit}/>
       : (
         Object.keys(displayData).map( (el, i) => {
           return(
