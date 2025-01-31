@@ -6,7 +6,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-export default function FormBuilder({formFields, onCancel, defaultData}) {
+export default function FormBuilder({formFields, onCancel, defaultData, onSubmit, submitBtnTxt = 'save'}) {
   const [formData, setFormData] = useState(
     Object.fromEntries(formFields.map(field => [field["CSV column name"], defaultData?.[field["Data element label"]] ?? '']))
   );
@@ -14,6 +14,7 @@ export default function FormBuilder({formFields, onCancel, defaultData}) {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form Data Submitted:", formData);
+    onSubmit(formData);
   };
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -24,6 +25,7 @@ export default function FormBuilder({formFields, onCancel, defaultData}) {
       {
         formFields.map( (field, i)=> {
           if (field?.Type === "select") {
+            console.log((field["multi-select"] && formData[field['CSV column name']] === '') ? [] : formData[field['CSV column name']])
             return (
               <FormControl variant="filled" fullWidth key={i} required={field["Required field"]}>
                 <InputLabel id={`${[field['CSV column name']]}-label`}>
@@ -32,7 +34,7 @@ export default function FormBuilder({formFields, onCancel, defaultData}) {
                 <Select
                   labelId={`${[field['CSV column name']]}-label`}
                   id={field['CSV column name']}
-                  value={formData[field['CSV column name']]}
+                  value={(field["multi-select"] && formData[field['CSV column name']] === '') ? [] : formData[field['CSV column name']]}
                   label={field['Data element label']}
                   onChange={(e) => handleChange(field['CSV column name'], e.target.value)}
                   multiple={field["multi-select"]}
@@ -45,7 +47,14 @@ export default function FormBuilder({formFields, onCancel, defaultData}) {
             )
           } else if( field?.Type === "text") {
             return (
-              <TextField key={i} id={field['CSV column name']} required={field["Required field"]} defaultValue={formData[field['CSV column name']]} label={field['Data element label']} variant="filled" />
+              <TextField key={i}
+                         id={field['CSV column name']}
+                         required={field["Required field"]}
+                         value={formData[field['CSV column name']] ?? undefined}
+                         label={field['Data element label']}
+                         variant="filled"
+                         onChange={(e) => handleChange(field['CSV column name'], e.target.value)}
+              />
             )
           } else if( field?.Type === "date") {
             return (
@@ -64,11 +73,15 @@ export default function FormBuilder({formFields, onCancel, defaultData}) {
       }
       {/** Buttons */}
       <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-        <Button variant="outlined" onClick={()=>onCancel()}>
-          Cancel
-        </Button>
+        {
+          onCancel && (
+            <Button variant="outlined" onClick={()=>onCancel()}>
+              Cancel
+            </Button>
+          )
+        }
         <Button variant="contained" type="submit">
-          Save
+          { submitBtnTxt }
         </Button>
       </Box>
     </Stack>
