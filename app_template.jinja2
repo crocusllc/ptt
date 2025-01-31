@@ -113,23 +113,33 @@ def create_app():
 
         if table_name not in ["student_info", "program_info", "clinical_placement_info"]:
             return jsonify({"error": "Invalid table_name"}), 400
-        
-        table = metadata.tables.get(table_name)
-        if not table:
-            return jsonify({"error": "Table not found"}), 400
 
         rows_to_insert = []
         for row in csv_reader:
             row_data = {field: row[field] for field in fields if field in row}
             rows_to_insert.append(row_data)
-
-        conn = engine.connect()
-        conn.execute(table.insert(), rows_to_insert)
-        conn.close()
         
+        # Insert data using psycopg2
+        try:
+            if rows_to_insert:
+                # Extract column names
+                columns = list(rows_to_insert[0].keys())
+                values = [[row[col] for col in columns] for row in rows_to_insert]
+        
+            # Build INSERT query dynamically
+            query = f"""
+            INSERT INTO {table_name} ({', '.join(columns)}) 
+            VALUES ({', '.join(['%s' for _ in columns])})
+            """
+            # Execute batch insert
+            cur.executemany(query, values)
+
+        except psycopg2.Error as e:
+            return jsonify({"message": f"Database error: {e}", "file_name": file_name, "table_name": table_name})
+
         return jsonify({"message": "File uploaded successfully", "file_name": file_name, "table_name": table_name})
 
- # ========== FILE DOWNLOAD ENDPOINT ==========
+    # ========== FILE DOWNLOAD ENDPOINT ==========
     @app.route("/file_download", methods=["POST"])
     @login_required(role_required=["administrator", "viewer"])
     def file_download():
