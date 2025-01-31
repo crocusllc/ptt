@@ -9,6 +9,8 @@ services:
         PG_PORT: 5432
         PG_HOST: localhost
         SECRET_KEY: SUPER_SECRET
+    volumes:
+      - ./app.py:/app/app.py
     ports:
       - 5432
       - 5000
