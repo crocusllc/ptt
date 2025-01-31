@@ -1,11 +1,3 @@
---- #database
-database:
-  name: PG_DB
-  user: PG_USER
-  password: PG_PWD
-  host: PG_HOST
-  port: PG_PORT
-
 --- #app theming
 theme:
   logo: /ptt_logo.png
