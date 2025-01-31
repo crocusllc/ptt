@@ -69,7 +69,7 @@ def create_app():
         if not username or not password:
             return jsonify({"error": "Missing username/password"}), 400
 
-        cur.execute("SELECT user_role, password_hash from users where username=%s;", (username,))
+        cur.execute("SELECT user_role, password_hash, username from users where username=%s;", (username,))
         user = cur.fetchone()
 
         if not user:
@@ -91,7 +91,7 @@ def create_app():
             algorithm="HS256"
         )
 
-        return jsonify({"token": token})
+        return jsonify({"token": token, "username": user[2], "role": user[0]})
 
     # ========== FILE UPLOAD ENDPOINT ==========
     @app.route("/file_upload", methods=["POST"])
@@ -163,20 +163,23 @@ def create_app():
     @login_required(role_required=["administrator", "viewer"])
     def student_record():
         data = request.get_json() or {}
-        student_id = data.get("student_id")
         
-        cur.execute("SELECT user_role, password_hash from users where username=%s;", (username,))
-        user = cur.fetchone()
+        if (data):
+          student_id = data.get("student_id")
+        
+          cur.execute("SELECT * from student_info where id=%s;", (student_id,))
+          result = cur.fetchone()
+        else:
+          cur.execute("SELECT * from student_info;")
+          result = cur.fetchall()
 
-        #conn = engine.connect()
-        #sel = student_table.select()
         #if student_id:
         #    sel = sel.where(student_table.c.id == int(student_id))
         #results = conn.execute(sel).fetchall()
         #conn.close()
 
         #return jsonify([dict(row) for row in results])
-        return {"student_record": student_id}
+        return {}
 
     return app
 
