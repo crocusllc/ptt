@@ -207,13 +207,13 @@ def main():
         template = jinja_env.from_string(template_str)
         rendered_code = template.render(PG_USER=pguser, PG_DB=pgdb, PG_PORT=pgport, PG_PWD=pgpwd, PG_HOST=pghost, SECRET_KEY=secretkey)
         
-        with open("supervisor.conf", "r", encoding="utf-8") as f:
+        with open("supervisord.conf", "r", encoding="utf-8") as f:
             supervisor_str = f.read()
 
         template = jinja_env.from_string(supervisor_str)
         rendered_supervisor = template.render(PG_PORT=pgport, PG_USER=pguser)
   
-        with open("supervisor.conf", "w", encoding="utf-8") as out_file:
+        with open("supervisord.conf", "w", encoding="utf-8") as out_file:
            out_file.write(rendered_supervisor)
  
         # 4. Write to the output file
