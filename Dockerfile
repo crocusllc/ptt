@@ -47,11 +47,6 @@ RUN /usr/lib/postgresql/15/bin/initdb -D /var/lib/postgresql/data
 
 COPY backend/sql/ /scripts/
 
-#RUN /usr/lib/postgresql/15/bin/pg_ctl \
-#    -D /var/lib/postgresql/data \
-#    -o "-p ${PG_PORT}" \
-#    -l /var/lib/postgresql/data/logfile \
-#    start
 RUN service postgresql start \ 
 && psql -U $PG_USER -p $PG_PORT -d postgres -c "CREATE DATABASE $PG_DB" \
 && psql -U $PG_USER -p $PG_PORT -d $PG_DB -f /scripts/users_ddl.sql \
