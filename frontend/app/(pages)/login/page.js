@@ -6,8 +6,9 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 
-import {useState} from "react";
+import {useRef, useState} from "react";
 import Link from "next/link";
+import { redirect } from 'next/navigation'
 
 export default function LoginPage() {
 
@@ -15,25 +16,41 @@ export default function LoginPage() {
   const [emailErrorMessage, setEmailErrorMessage] = useState('');
   const [passwordError, setPasswordError] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
+  const [usernameError, setUsernameError] = useState(false);
+  const [usernameErrorMessage, setUsernameErrorMessage] = useState('')
+
+  const usernameInput = useRef(null);
+  const passInput = useRef(null);
 
   const validateInputs = () => {
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
+    // const email = document.getElementById('email');
+    // const username = document.getElementById('username');
+    // const password = document.getElementById('password');
 
     let isValid = true;
 
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
+    // if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+    //   setEmailError(true);
+    //   setEmailErrorMessage('Please enter a valid email address.');
+    //   isValid = false;
+    // } else {
+    //   setEmailError(false);
+    //   setEmailErrorMessage('');
+    // }
+
+    if(passInput.current.value >= 4) {
+      setUsernameError(true);
+      setUsernameErrorMessage('Username Error, please check');
       isValid = false;
+      console.log("regex error")
     } else {
-      setEmailError(false);
-      setEmailErrorMessage('');
+      setUsernameError(false);
+      setUsernameErrorMessage('')
     }
 
-    if (!password.value || password.value.length < 6) {
+    if (passInput.current.value >= 4) {
       setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 6 characters long.');
+      setPasswordErrorMessage('Password must be at least 4 characters long.');
       isValid = false;
     } else {
       setPasswordError(false);
@@ -41,18 +58,30 @@ export default function LoginPage() {
     }
     return isValid;
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (emailError || passwordError) {
+    if (usernameError || passwordError) {
       return;
     }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      name: data.get('name'),
-      lastName: data.get('lastName'),
-      email: data.get('email'),
-      password: data.get('password'),
+    const response = await fetch('http://localhost:3030/login ', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        "username": usernameInput.current.value,
+        "password": passInput.current.value
+      }),
     });
+
+    if (response.ok) {
+      const res = await response.json();
+      const { token, username, role } = res;
+      document.cookie = `authToken=${token}; path=/; Secure; SameSite=Strict`;
+      document.cookie = `username=${username}; path=/; Secure; SameSite=Strict`;
+      document.cookie = `userRole=${role}; path=/; Secure; SameSite=Strict`;
+      redirect(`/`)
+    } else {
+      console.error('Login failed');
+    }
   };
 
   return (
@@ -68,18 +97,31 @@ export default function LoginPage() {
             sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
           >
             <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
+              <FormLabel htmlFor="email">User name</FormLabel>
+              {/*<TextField*/}
+              {/*  required*/}
+              {/*  fullWidth*/}
+              {/*  id="email"*/}
+              {/*  placeholder="your@email.com"*/}
+              {/*  name="email"*/}
+              {/*  autoComplete="email"*/}
+              {/*  variant="outlined"*/}
+              {/*  error={emailError}*/}
+              {/*  helperText={emailErrorMessage}*/}
+              {/*  color={emailError ? 'error' : 'primary'}*/}
+              {/*/>*/}
               <TextField
                 required
                 fullWidth
-                id="email"
-                placeholder="your@email.com"
-                name="email"
-                autoComplete="email"
+                id="username"
+                placeholder=""
+                name="username"
+                autoComplete="username"
                 variant="outlined"
-                error={emailError}
-                helperText={emailErrorMessage}
-                color={emailError ? 'error' : 'primary'}
+                error={usernameError}
+                helperText={usernameErrorMessage}
+                color={usernameError ? 'error' : 'primary'}
+                inputRef={usernameInput}
               />
             </FormControl>
             <FormControl>
@@ -96,6 +138,7 @@ export default function LoginPage() {
                 error={passwordError}
                 helperText={passwordErrorMessage}
                 color={passwordError ? 'error' : 'primary'}
+                inputRef={passInput}
               />
             </FormControl>
             <Box sx={{display: "flex", justifyContent: "space-between"}}>
@@ -107,7 +150,7 @@ export default function LoginPage() {
                 variant="contained"
                 onClick={validateInputs}
               >
-                Sign up
+                Sign in
               </Button>
             </Box>
           </Box>

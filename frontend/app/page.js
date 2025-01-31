@@ -10,15 +10,19 @@ import {Stack, Typography} from "@mui/material";
 export default function Home() {
   const router = useRouter();
 
-  // Simulate user authentication check
-  const isLoggedIn = true; // Replace with real authentication logic
-
+  // authentication check
   useEffect(() => {
-    if (!isLoggedIn) {
+    const getCookies =  document.cookie.split('; ').reduce((cookies, cookie) => {
+      const [key, value] = cookie.split('=');
+      cookies[key] = decodeURIComponent(value); // Decode in case values are encoded
+      return cookies;
+    }, {});
+
+    if (!getCookies.authToken) {
       // Redirect to the login page if not logged in
       router.push('/login');
     }
-  }, [isLoggedIn, router]);
+  }, [router]);
 
   return (
     <Box sx={{minHeight: "100vh"}}>

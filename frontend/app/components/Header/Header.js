@@ -5,11 +5,14 @@ import Box from "@mui/material/Box";
 import Link from "next/link";
 import getConfigData from "@/app/utils/getConfigs"
 import UserProfile from "@/app/components/UserProfile/UserProfile";
+import {usePathname} from "next/navigation";
 
 
 export default function() {
   // Validating the source o app logo.
   const appLogo = (getConfigData()?.theme?.logo) ?? "/ptt_logo.png";
+  const pathname = usePathname()
+
 
   return(
     <Box sx={{padding: "20px", borderBottom: "1px solid #c6c6c6", marginBottom: "20px", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
@@ -27,7 +30,11 @@ export default function() {
         </Box>
       </Box>
       <Box>
-        <UserProfile/>
+        {
+          pathname !== '/login' && (
+            <UserProfile/>
+          )
+        }
       </Box>
     </Box>
   )
