@@ -4,12 +4,16 @@ import io
 import jwt
 import datetime
 import psycopg2
-from flask import Flask, request, jsonify, send_file
+import psycopg2.extras
+from flask import Flask, request, jsonify, send_file, current_app
+from flask_cors import CORS
 from passlib.hash import bcrypt
 from functools import wraps
 
 def create_app():
     app = Flask(__name__)
+    CORS(app, origins=["*"])
+
     # Set up DB engine
     app.config["SECRET_KEY"] = "{{SECRET_KEY}}"
     # Set up DB engine
@@ -20,7 +24,7 @@ def create_app():
       host="{{PG_HOST}}",
       port="{{PG_PORT}}"
     )
-    cur = conn.cursor()
+    cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
  
     @app.route('/')
     def hello():
@@ -66,7 +70,7 @@ def create_app():
         if not username or not password:
             return jsonify({"error": "Missing username/password"}), 400
 
-        cur.execute("SELECT user_role, password_hash from users where username=%s;", (username,))
+        cur.execute("SELECT user_role, password_hash, username from users where username=%s;", (username,))
         user = cur.fetchone()
 
         if not user:
@@ -88,11 +92,11 @@ def create_app():
             algorithm="HS256"
         )
 
-        return jsonify({"token": token})
+        return jsonify({"token": token, "username": user[2], "role": user[0]})
 
     # ========== FILE UPLOAD ENDPOINT ==========
     @app.route("/file_upload", methods=["POST"])
-    @login_required(role_required=["admin", "editor"])
+    @login_required(role_required=["administrator", "editor"])
     def file_upload():
         data = request.get_json() or {}
         file_name = data.get("file_name")
@@ -109,25 +113,35 @@ def create_app():
 
         if table_name not in ["student_info", "program_info", "clinical_placement_info"]:
             return jsonify({"error": "Invalid table_name"}), 400
-        
-        table = metadata.tables.get(table_name)
-        if not table:
-            return jsonify({"error": "Table not found"}), 400
 
         rows_to_insert = []
         for row in csv_reader:
             row_data = {field: row[field] for field in fields if field in row}
             rows_to_insert.append(row_data)
-
-        conn = engine.connect()
-        conn.execute(table.insert(), rows_to_insert)
-        conn.close()
         
+        # Insert data using psycopg2
+        try:
+            if rows_to_insert:
+                # Extract column names
+                columns = list(rows_to_insert[0].keys())
+                values = [[row[col] for col in columns] for row in rows_to_insert]
+        
+            # Build INSERT query dynamically
+            query = f"""
+            INSERT INTO {table_name} ({', '.join(columns)}) 
+            VALUES ({', '.join(['%s' for _ in columns])})
+            """
+            # Execute batch insert
+            cur.executemany(query, values)
+
+        except psycopg2.Error as e:
+            return jsonify({"message": f"Database error: {e}", "file_name": file_name, "table_name": table_name})
+
         return jsonify({"message": "File uploaded successfully", "file_name": file_name, "table_name": table_name})
 
- # ========== FILE DOWNLOAD ENDPOINT ==========
+    # ========== FILE DOWNLOAD ENDPOINT ==========
     @app.route("/file_download", methods=["POST"])
-    @login_required(role_required=["admin", "viewer"])
+    @login_required(role_required=["administrator", "viewer"])
     def file_download():
         data = request.get_json() or {}
         file_name = data.get("file_name")
@@ -136,38 +150,55 @@ def create_app():
         if not file_name or not fields:
             return jsonify({"error": "Missing file_name or fields"}), 400
 
-        conn = engine.connect()
-        sel = student_table.select().with_only_columns([student_table.c[field] for field in fields if field in student_table.c])
-        results = conn.execute(sel).fetchall()
-        conn.close()
-
-        output = io.StringIO()
-        writer = csv.writer(output)
-        writer.writerow(fields)
-        for row in results:
-            writer.writerow([row[field] for field in fields])
+        query_fields = ",".join(str(bit) for bit in fields)
         
-        output.seek(0)
-        return send_file(
+        if query_fields == "":
+          query_fields = "*"
+        else:
+          query = f"SELECT {query_fields} from student_info;"
+          cur.execute(query)
+          results = cur.fetchall()
+
+          current_app.logger.info("Fetch specified columns")
+          output = io.StringIO()
+          writer = csv.writer(output)
+          writer.writerow(fields)
+          for row in results:
+            writer.writerow([row[field] for field in fields])
+
+          output.seek(0)
+          return send_file(
             io.BytesIO(output.getvalue().encode("utf-8")),
             mimetype="text/csv",
             as_attachment=True,
             download_name=file_name
-        )
+          )
+
+         # return {}
 
     # ========== STUDENT RECORD ENDPOINT ==========
-    @app.route("/student_record", methods=["GET"])
-    @login_required(role_required=["admin", "viewer"])
+    @app.route("/student_record_info", methods=["GET", "POST"])
+    @login_required(role_required=["administrator", "viewer"])
     def student_record():
-        student_id = request.args.get("student_id")
-        conn = engine.connect()
-        sel = student_table.select()
-        if student_id:
-            sel = sel.where(student_table.c.id == int(student_id))
-        results = conn.execute(sel).fetchall()
-        conn.close()
+      if request.method == 'POST':
+        data = request.get_json() or {}
+        
+        if (data != {}):
+          student_id = data.get("student_id")
+        
+          cur.execute("SELECT * from student_info where id=%s;", (student_id,))
+          result = cur.fetchone()
+          
+          if result is not None:
+            return jsonify(result)
+          else:
+            return jsonify({"message": "The student_id doesn't exist"})
 
-        return jsonify([dict(row) for row in results])
+      if request.method == 'GET':
+        cur.execute("SELECT * from student_info;")
+        result = cur.fetchall()
+        
+        return jsonify(result)
 
     return app
 
