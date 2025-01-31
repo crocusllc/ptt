@@ -76,8 +76,8 @@ def create_app():
         if not user:
             return jsonify({"error": "Invalid username or password"}), 401
 
-        stored_hash = user[1]
-        #return jsonify(stored_hash[0])
+        stored_hash = user['password_hash']
+
         if not bcrypt.verify(password, stored_hash):
             return jsonify({"error": "Invalid username or password"}), 401
 
@@ -85,14 +85,14 @@ def create_app():
         token = jwt.encode(
             {
                 "sub": username,
-                "role": user[0],
+                "role": user['user_role'],
                 "exp": expiration
             },
             app.config["SECRET_KEY"],
             algorithm="HS256"
         )
 
-        return jsonify({"token": token, "username": user[2], "role": user[0]})
+        return jsonify({"token": token, "username": user['username'], "role": user['user_role']})
 
     # ========== FILE UPLOAD ENDPOINT ==========
     @app.route("/file_upload", methods=["POST"])
