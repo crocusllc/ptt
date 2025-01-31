@@ -1,9 +1,12 @@
+"use client"
+
 import { Geist, Geist_Mono } from "next/font/google";
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import "./globals.css";
 import Header from "@/app/components/Header/Header";
 import MainMenu from "@/app/components/MainMenu/MainMenu";
 import Box from "@mui/material/Box";
+import { usePathname } from 'next/navigation'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export default function RootLayout({ children }) {
-
+  const pathname = usePathname()
   return (
     <html lang="en">
       <AppRouterCacheProvider>
@@ -29,9 +32,13 @@ export default function RootLayout({ children }) {
             <Box component={"header"} sx={{gridColumn: "1 / 3"}}>
               <Header/>
             </Box>
-            <Box component={"aside"} sx={{gridColumn: "1 / 2"}}>
-              <MainMenu/>
-            </Box>
+            {
+              pathname !== '/login' && (
+                <Box component={"aside"} sx={{gridColumn: "1 / 2"}}>
+                  <MainMenu/>
+                </Box>
+              )
+            }
             <Box component={"main"} sx={{gridColumn: "2 / 3", paddingBottom: "20px", paddingRight: "20px"}}>
               {children}
             </Box>
