@@ -39,7 +39,7 @@ def create_app():
     app = Flask(__name__)
     # Set up DB engine
 {% endraw %}
-    app.config["SECRET_KEY"] = {{SECRET_KEY}}
+    app.config["SECRET_KEY"] = "{{SECRET_KEY}}"
 {% raw %}
     # Set up DB engine
 {% endraw %}
