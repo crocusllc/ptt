@@ -6,3 +6,4 @@ SQLAlchemy
 passlib
 pyYAML
 cryptography
+flask-cors
