@@ -140,24 +140,31 @@ def create_app():
         if not file_name or not fields:
             return jsonify({"error": "Missing file_name or fields"}), 400
 
-        conn = engine.connect()
-        sel = student_table.select().with_only_columns([student_table.c[field] for field in fields if field in student_table.c])
-        results = conn.execute(sel).fetchall()
-        conn.close()
-
-        output = io.StringIO()
-        writer = csv.writer(output)
-        writer.writerow(fields)
-        for row in results:
-            writer.writerow([row[field] for field in fields])
+        query_fields = ",".join(str(bit) for bit in fields)
         
-        output.seek(0)
-        return send_file(
+        if query_fields == "":
+          query_fields = "*"
+        else:
+          query = f"SELECT {query_fields} from student_info;"
+          cur.execute(query)
+          results = cur.fetchall()
+
+          current_app.logger.info("Fetch specified columns")
+          output = io.StringIO()
+          writer = csv.writer(output)
+          writer.writerow(fields)
+          for row in results:
+            writer.writerow([row[field] for field in fields])
+
+          output.seek(0)
+          return send_file(
             io.BytesIO(output.getvalue().encode("utf-8")),
             mimetype="text/csv",
             as_attachment=True,
             download_name=file_name
-        )
+          )
+
+         # return {}
 
     # ========== STUDENT RECORD ENDPOINT ==========
     @app.route("/student_record_info", methods=["GET", "POST"])
