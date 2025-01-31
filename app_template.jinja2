@@ -4,7 +4,8 @@ import io
 import jwt
 import datetime
 import psycopg2
-from flask import Flask, request, jsonify, send_file
+import psycopg2.extras
+from flask import Flask, request, jsonify, send_file, current_app
 from flask_cors import CORS
 from passlib.hash import bcrypt
 from functools import wraps
@@ -23,7 +24,7 @@ def create_app():
       host="{{PG_HOST}}",
       port="{{PG_PORT}}"
     )
-    cur = conn.cursor()
+    cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
  
     @app.route('/')
     def hello():
@@ -139,47 +140,55 @@ def create_app():
         if not file_name or not fields:
             return jsonify({"error": "Missing file_name or fields"}), 400
 
-        conn = engine.connect()
-        sel = student_table.select().with_only_columns([student_table.c[field] for field in fields if field in student_table.c])
-        results = conn.execute(sel).fetchall()
-        conn.close()
-
-        output = io.StringIO()
-        writer = csv.writer(output)
-        writer.writerow(fields)
-        for row in results:
-            writer.writerow([row[field] for field in fields])
+        query_fields = ",".join(str(bit) for bit in fields)
         
-        output.seek(0)
-        return send_file(
+        if query_fields == "":
+          query_fields = "*"
+        else:
+          query = f"SELECT {query_fields} from student_info;"
+          cur.execute(query)
+          results = cur.fetchall()
+
+          current_app.logger.info("Fetch specified columns")
+          output = io.StringIO()
+          writer = csv.writer(output)
+          writer.writerow(fields)
+          for row in results:
+            writer.writerow([row[field] for field in fields])
+
+          output.seek(0)
+          return send_file(
             io.BytesIO(output.getvalue().encode("utf-8")),
             mimetype="text/csv",
             as_attachment=True,
             download_name=file_name
-        )
+          )
+
+         # return {}
 
     # ========== STUDENT RECORD ENDPOINT ==========
     @app.route("/student_record_info", methods=["GET", "POST"])
     @login_required(role_required=["administrator", "viewer"])
     def student_record():
+      if request.method == 'POST':
         data = request.get_json() or {}
         
-        if (data):
+        if (data != {}):
           student_id = data.get("student_id")
         
           cur.execute("SELECT * from student_info where id=%s;", (student_id,))
           result = cur.fetchone()
-        else:
-          cur.execute("SELECT * from student_info;")
-          result = cur.fetchall()
+          
+          if result is not None:
+            return jsonify(result)
+          else:
+            return jsonify({"message": "The student_id doesn't exist"})
 
-        #if student_id:
-        #    sel = sel.where(student_table.c.id == int(student_id))
-        #results = conn.execute(sel).fetchall()
-        #conn.close()
-
-        #return jsonify([dict(row) for row in results])
-        return {}
+      if request.method == 'GET':
+        cur.execute("SELECT * from student_info;")
+        result = cur.fetchall()
+        
+        return jsonify(result)
 
     return app
 
