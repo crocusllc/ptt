@@ -12,9 +12,9 @@ services:
     volumes:
       - ./app.py:/app/app.py
     ports:
-      - 5432
-      - 5000
+      - 5432:5432
+      - 3030:5000
   app:
     build: frontend
     ports:
-      - 3000
+      - 3000:3000
