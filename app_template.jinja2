@@ -8,6 +8,17 @@ from flask import Flask, request, jsonify, send_file
 from passlib.hash import bcrypt
 from functools import wraps
 
+def _build_cors_preflight_response():
+    response = make_response()
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add('Access-Control-Allow-Headers', "*")
+    response.headers.add('Access-Control-Allow-Methods', "*")
+    return response
+
+def _corsify_actual_response(response):
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
 def create_app():
     app = Flask(__name__)
     # Set up DB engine
@@ -88,7 +99,12 @@ def create_app():
             algorithm="HS256"
         )
 
-        return jsonify({"token": token})
+        if request.method == "OPTIONS": # CORS preflight
+          return _build_cors_preflight_response()
+        elif request.method == "POST": # The actual request following the preflight
+          return _corsify_actual_response(jsonify({"token": token})
+        else:
+          raise RuntimeError("Error{}".format(request.method))
 
     # ========== FILE UPLOAD ENDPOINT ==========
     @app.route("/file_upload", methods=["POST"])
