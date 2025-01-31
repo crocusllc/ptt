@@ -49,17 +49,13 @@ COPY backend/sql/ /scripts/
 
 RUN /usr/lib/postgresql/15/bin/pg_ctl \
     -D /var/lib/postgresql/data \
-    -o "-p ${PG_PORT}" \
+    -o "-p $PG_PORT" \
     -l /var/lib/postgresql/data/logfile \
-    start \
-&& createdb -p $PG_PORT $PG_DB \
+    start \ 
+&& psql -U $PG_USER -p $PG_PORT -d postgres -c "CREATE DATABASE $PG_DB" \
 && psql -U $PG_USER -p $PG_PORT -d $PG_DB -f /scripts/users_ddl.sql \
-&& psql -U $PG_USER -p $PG_PORT -d $PG_DB -f /scripts/logs_ddl.sql \
+&& psql -U $PG_USER -p $PG_PORT -d $PG_DB -f /scripts/logs_ddl.sql
 #&& psql -U postgres -d ptt_db -f /scripts/student_info.sql \
-&& /usr/lib/postgresql/15/bin/pg_ctl \
-  -D /var/lib/postgresql/data \
-  -o "-p ${PG_PORT}" \
-  stop
 
 # Switch back to root so supervisor can manage processes
 USER root

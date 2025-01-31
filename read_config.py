@@ -93,8 +93,10 @@ def parse_config_for_db(config_path):
         docs = list(yaml.safe_load_all(f))
 
     for doc in docs:
-        if 'fields' in doc and 'form' in doc['fields']:
-            form_def = doc['fields']['form']
+        
+        if 'fields' in doc.keys():#and 'form' in doc['fields']:
+            form_def = doc['fields'][0]['form']
+
             for key, value in form_def.items():
                 if key.startswith("field-"):
                     field_list.append((value.get("CSV column name"), value.get("Category"), value.get("Type")))
@@ -204,7 +206,16 @@ def main():
         jinja_env = jinja2.Environment()
         template = jinja_env.from_string(template_str)
         rendered_code = template.render(PG_USER=pguser, PG_DB=pgdb, PG_PORT=pgport, PG_PWD=pgpwd, PG_HOST=pghost, SECRET_KEY=secretkey)
+        
+        with open("supervisord.conf", "r", encoding="utf-8") as f:
+            supervisor_str = f.read()
 
+        template = jinja_env.from_string(supervisor_str)
+        rendered_supervisor = template.render(PG_PORT=pgport, PG_USER=pguser)
+  
+        with open("supervisord.conf", "w", encoding="utf-8") as out_file:
+           out_file.write(rendered_supervisor)
+ 
         # 4. Write to the output file
         with open(args.output, "w", encoding="utf-8") as out_file:
            out_file.write(rendered_code)
