@@ -144,7 +144,7 @@ def create_sql_files(fields):
     # Save SQL scripts to files
     for table_name, sql in sql_statements.items():
         file_name = f"{table_name}.sql"
-        with open(file_name, "w") as f:
+        with open(f"backend/sql/{file_name}", "w") as f:
             f.write(sql)
         print(f"Generated {file_name}")
 
