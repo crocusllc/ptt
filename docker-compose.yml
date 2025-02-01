@@ -2,7 +2,7 @@ services:
   api:
     build:
       context: .
-      args: 
+      args:
         PG_USER: postgres
         PG_PWD: postgres
         PG_DB: ptt_db
@@ -18,3 +18,5 @@ services:
     build: frontend
     ports:
       - 3000:3000
+    volumes:
+      - ./frontend/.env:/app/.env

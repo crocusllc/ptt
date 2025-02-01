@@ -5,50 +5,34 @@ import {FormControl, FormLabel, TextField, Typography} from "@mui/material";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
-
 import {useRef, useState} from "react";
 import Link from "next/link";
-import { redirect } from 'next/navigation'
+import {signIn} from "next-auth/react";
 
 export default function LoginPage() {
-
-  const [emailError, setEmailError] = useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = useState('');
   const [passwordError, setPasswordError] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
   const [usernameError, setUsernameError] = useState(false);
   const [usernameErrorMessage, setUsernameErrorMessage] = useState('')
+  const [loginError, setLoginError] = useState('')
 
   const usernameInput = useRef(null);
   const passInput = useRef(null);
 
   const validateInputs = () => {
-    // const email = document.getElementById('email');
-    // const username = document.getElementById('username');
-    // const password = document.getElementById('password');
-
+    setLoginError('');
     let isValid = true;
 
-    // if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-    //   setEmailError(true);
-    //   setEmailErrorMessage('Please enter a valid email address.');
-    //   isValid = false;
-    // } else {
-    //   setEmailError(false);
-    //   setEmailErrorMessage('');
-    // }
-
-    if(passInput.current.value >= 4) {
+    if(usernameInput.current.value.length < 4) {
       setUsernameError(true);
-      setUsernameErrorMessage('Username Error, please check');
+      setUsernameErrorMessage('Username must be at least 4 characters long');
       isValid = false;
-      console.log("regex error")
     } else {
       setUsernameError(false);
       setUsernameErrorMessage('')
     }
 
-    if (passInput.current.value >= 4) {
+    if (passInput.current.value.length < 4) {
       setPasswordError(true);
       setPasswordErrorMessage('Password must be at least 4 characters long.');
       isValid = false;
@@ -58,29 +42,23 @@ export default function LoginPage() {
     }
     return isValid;
   };
-  const handleSubmit = async (e) => {
+  const handleSubmit =  async (e) => {
     e.preventDefault();
     if (usernameError || passwordError) {
       return;
     }
-    const response = await fetch('http://localhost:3030/login ', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        "username": usernameInput.current.value,
-        "password": passInput.current.value
-      }),
+
+    const response = await signIn("credentials", {
+      redirect: false,
+      username: usernameInput.current.value,
+      password: passInput.current.value,
     });
 
-    if (response.ok) {
-      const res = await response.json();
-      const { token, username, role } = res;
-      document.cookie = `authToken=${token}; path=/; Secure; SameSite=Strict`;
-      document.cookie = `username=${username}; path=/; Secure; SameSite=Strict`;
-      document.cookie = `userRole=${role}; path=/; Secure; SameSite=Strict`;
-      redirect(`/`)
-    } else {
-      console.error('Login failed');
+    if(response?.error) {
+      setLoginError('Username or password incorrect')
+    } else  {
+      // redirect and router.push do not work in prod mode.
+      window.location.href = "/";
     }
   };
 
@@ -97,19 +75,7 @@ export default function LoginPage() {
             sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
           >
             <FormControl>
-              <FormLabel htmlFor="email">User name</FormLabel>
-              {/*<TextField*/}
-              {/*  required*/}
-              {/*  fullWidth*/}
-              {/*  id="email"*/}
-              {/*  placeholder="your@email.com"*/}
-              {/*  name="email"*/}
-              {/*  autoComplete="email"*/}
-              {/*  variant="outlined"*/}
-              {/*  error={emailError}*/}
-              {/*  helperText={emailErrorMessage}*/}
-              {/*  color={emailError ? 'error' : 'primary'}*/}
-              {/*/>*/}
+              <FormLabel htmlFor="username">User name</FormLabel>
               <TextField
                 required
                 fullWidth
@@ -154,9 +120,17 @@ export default function LoginPage() {
               </Button>
             </Box>
           </Box>
+          {
+            loginError && (
+              <Box sx={{textAlign: "center", marginTop: "24px", color: "red", fontSize: "14px"}}>
+                {
+                  loginError
+                }
+              </Box>
+            )
+          }
         </CardContent>
       </Card>
-
     </Box>
 
   );

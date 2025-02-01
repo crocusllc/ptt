@@ -1,28 +1,9 @@
-"use client"
-
 import Box from '@mui/material/Box';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from "next/link";
 import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
 import {Stack, Typography} from "@mui/material";
 
 export default function Home() {
-  const router = useRouter();
-
-  // authentication check
-  useEffect(() => {
-    const getCookies =  document.cookie.split('; ').reduce((cookies, cookie) => {
-      const [key, value] = cookie.split('=');
-      cookies[key] = decodeURIComponent(value); // Decode in case values are encoded
-      return cookies;
-    }, {});
-
-    if (!getCookies.authToken) {
-      // Redirect to the login page if not logged in
-      router.push('/login');
-    }
-  }, [router]);
 
   return (
     <Box sx={{minHeight: "100vh"}}>
