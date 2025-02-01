@@ -139,7 +139,6 @@ def create_app():
                 cur.execute(query, row)
             
             conn.commit()
-            conn.close()
 
         except psycopg2.Error as e:
             return jsonify({"message": f"Database error: {e}", "file_name": file_name, "table_name": table_name})
