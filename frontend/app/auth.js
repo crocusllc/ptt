@@ -23,7 +23,7 @@ export const { handlers, auth } = NextAuth({
         if (res.ok && user) {
           return user; // Return user object if authentication succeeds
         } else {
-          throw new Error("Invalid credentials.")
+          return null
         }
       },
     }),
