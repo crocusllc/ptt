@@ -4,6 +4,7 @@ import io
 import jwt
 import datetime
 import psycopg2
+import json
 import psycopg2.extras
 from flask import Flask, request, jsonify, send_file, current_app
 from flask_cors import CORS
@@ -98,11 +99,12 @@ def create_app():
     @app.route("/file_upload", methods=["POST"])
     @login_required(role_required=["administrator", "editor"])
     def file_upload():
-        data = request.get_json() or {}
-        file_name = data.get("file_name")
-        table_name = data.get("table_name")
-        fields = data.get("fields", [])
-        file_content = request.files.get("file")
+        data = json.loads(request.form.get('data'))
+
+        file_name = data["file_name"]
+        table_name = data["table_name"]
+        fields = data["fields"]
+        file_content = request.files['file']
 
         if not file_name or not table_name or not fields or not file_content:
             return jsonify({"error": "Missing file_name, table_name, fields, or file"}), 400
@@ -116,9 +118,9 @@ def create_app():
 
         rows_to_insert = []
         for row in csv_reader:
-            row_data = {field: row[field] for field in fields if field in row}
+            row_data = {field: row[field] if row[field] != '' else None for field in fields if field in row}
             rows_to_insert.append(row_data)
-        
+
         # Insert data using psycopg2
         try:
             if rows_to_insert:
@@ -131,8 +133,12 @@ def create_app():
             INSERT INTO {table_name} ({', '.join(columns)}) 
             VALUES ({', '.join(['%s' for _ in columns])})
             """
+            
             # Execute batch insert
-            cur.executemany(query, values)
+            for row in values:
+                cur.execute(query, row)
+            
+            conn.commit()
 
         except psycopg2.Error as e:
             return jsonify({"message": f"Database error: {e}", "file_name": file_name, "table_name": table_name})
@@ -173,8 +179,6 @@ def create_app():
             as_attachment=True,
             download_name=file_name
           )
-
-         # return {}
 
     # ========== STUDENT RECORD ENDPOINT ==========
     @app.route("/student_record_info", methods=["GET", "POST"])
