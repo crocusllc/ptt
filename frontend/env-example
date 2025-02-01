@@ -1,3 +1,4 @@
+#Copy this file and rename to .env in the same directory
 AUTH_SECRET=Uff3rC3SOda9pgr+vVzv+mo4xPNrTD2QhEEdvMP46Jdd
 API_URL=http://api:5000
 AUTH_TRUST_HOST=http://app:3000
