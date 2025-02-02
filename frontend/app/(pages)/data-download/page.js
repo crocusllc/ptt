@@ -1,6 +1,4 @@
 "use client"
-
-import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -27,7 +25,7 @@ function DownloadDataForm() {
   });
 
   // Handle download actions
-  const handleDownloadAll = async () => {
+  const handleDownload = async (fieldsSelected) => {
     {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/file_download`, {
@@ -36,15 +34,20 @@ function DownloadDataForm() {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${session.user.accessToken}`
           },
-          body: JSON.stringify({"file_name": "all_records.csv", fields: []}),
+          body: JSON.stringify({"file_name": "all_records.csv", fields: fieldsSelected}),
         });
 
         if (!response.ok) {
           console.error("HTTP Error:", response.status);
         }
 
+
         // Get the file content
-        const blob = await response.blob();
+        // Ensure the file content is read as text with UTF-8 encoding
+        const text = await response.text();
+        // Convert text to a Blob with proper encoding
+        const blob = new Blob([text], { type: "text/csv;charset=utf-8;" });
+
 
         // Create a download link
         const urlObject = window.URL.createObjectURL(blob);
@@ -63,10 +66,6 @@ function DownloadDataForm() {
     }
   };
 
-  const handleDownloadSelected = (data) => {
-    alert("Downloading selected records with filters: " + JSON.stringify(data));
-  };
-
   return (
     <Box sx={{ maxWidth: "600px"}}>
       <Box sx={{ marginBottom: "16px", padding: "16px", border: "1px solid #ccc", borderRadius: "4px" }}>
@@ -74,7 +73,7 @@ function DownloadDataForm() {
         <Button
           variant="contained"
           color="primary"
-          onClick={handleDownloadAll}
+          onClick={()=>handleDownload([])}
           sx={{ marginTop: "8px" }}
         >
           Download
@@ -86,7 +85,7 @@ function DownloadDataForm() {
           Download Selected Records:
         </Typography>
 
-        <FormBuilder formFields={downLoadFormFields} submitBtnTxt={"Download"} onSubmit={handleDownloadSelected}/>
+        <FormBuilder formFields={downLoadFormFields} submitBtnTxt={"Download"} onSubmit={handleDownload}/>
       </Box>
     </Box>
   );
