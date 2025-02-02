@@ -4,20 +4,15 @@ import React, { useState } from "react";
 import {
   Box,
   Button,
-  Grid,
-  MenuItem,
-  Select, Stack,
-  TextField,
   Typography,
 } from "@mui/material";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import getConfigData from "@/app/utils/getConfigs";
 import FormBuilder from "@/app/(pages)/student-records/[slug]/FormBuilder";
+import {SessionProvider, useSession} from "next-auth/react";
 
 
-const DownloadDataForm = () => {
+function DownloadDataForm() {
+  const { data: session } = useSession();
   const studentRecordFormFields = getConfigData()?.fields
     ?.find( el => el?.form?.Name === "Student Records")?.form;
 
@@ -32,8 +27,40 @@ const DownloadDataForm = () => {
   });
 
   // Handle download actions
-  const handleDownloadAll = () => {
-    alert("Downloading all records...");
+  const handleDownloadAll = async () => {
+    {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/file_download`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session.user.accessToken}`
+          },
+          body: JSON.stringify({"file_name": "all_records.csv", fields: []}),
+        });
+
+        if (!response.ok) {
+          console.error("HTTP Error:", response.status);
+        }
+
+        // Get the file content
+        const blob = await response.blob();
+
+        // Create a download link
+        const urlObject = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = urlObject;
+        link.download = "all_records.csv";
+        document.body.appendChild(link);
+        link.click();
+
+        // Clean up
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(urlObject);
+      } catch (error) {
+        console.error("Error fetching student record info:", error);
+      }
+    }
   };
 
   const handleDownloadSelected = (data) => {
@@ -64,5 +91,10 @@ const DownloadDataForm = () => {
     </Box>
   );
 };
-
-export default DownloadDataForm;
+export default function DownLoadRecordsPage() {
+  return (
+    <SessionProvider>
+      <DownloadDataForm />
+    </SessionProvider>
+  );
+}
