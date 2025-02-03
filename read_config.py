@@ -79,7 +79,7 @@ def create_csv(fields):
     filenames = ['student_data.csv', 'clinical_placement_data.csv', 'additional_program_student_data.csv']
     headers = [student_headers, clinical_headers, additional_headers]
     for filename, headers in zip(filenames, headers):
-       with open("frontend/public/docs/" + filename, 'w', newline='') as csvfile:
+       with open(f"/tmp/csv/{filename}", 'w', newline='') as csvfile:
           writer = csv.writer(csvfile)
           writer.writerow(headers)
     print("CSV files for bulk upload have been created.")
@@ -144,13 +144,11 @@ def create_sql_files(fields):
     # Save SQL scripts to files
     for table_name, sql in sql_statements.items():
         file_name = f"{table_name}.sql"
-        with open(f"backend/sql/{file_name}", "w") as f:
+        with open(f"/tmp/sql/{file_name}", "w") as f:
             f.write(sql)
         print(f"Generated {file_name}")
 
-    return sql_statements
-
-       
+    return sql_statements       
 
 def main():
     parser = argparse.ArgumentParser(
@@ -192,7 +190,7 @@ def main():
         with open(args.template, "r", encoding="utf-8") as f:
             template_str = f.read()
 
-        compose_file = parse_yaml('docker-compose.yml')
+        compose_file = parse_yaml('/tmp/docker-compose.yml')
         file_args = compose_file[0]['services']['api']['build']['args']
 
         pguser=file_args['PG_USER']
@@ -207,13 +205,13 @@ def main():
         template = jinja_env.from_string(template_str)
         rendered_code = template.render(PG_USER=pguser, PG_DB=pgdb, PG_PORT=pgport, PG_PWD=pgpwd, PG_HOST=pghost, SECRET_KEY=secretkey)
         
-        with open("supervisord.conf", "r", encoding="utf-8") as f:
+        with open("/tmp/supervisord.conf", "r", encoding="utf-8") as f:
             supervisor_str = f.read()
 
         template = jinja_env.from_string(supervisor_str)
         rendered_supervisor = template.render(PG_PORT=pgport, PG_USER=pguser)
   
-        with open("supervisord.conf", "w", encoding="utf-8") as out_file:
+        with open("/tmp/supervisord.conf", "w", encoding="utf-8") as out_file:
            out_file.write(rendered_supervisor)
  
         # 4. Write to the output file

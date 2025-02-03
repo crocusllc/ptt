@@ -11,6 +11,8 @@ services:
         SECRET_KEY: SUPER_SECRET
     volumes:
       - ./app.py:/app/app.py
+      - ./frontend/public/docs:/tmp/csv
+      - ./backend/sql:/tmp/sql
     ports:
       - 5432:5432
       - 3030:5000
