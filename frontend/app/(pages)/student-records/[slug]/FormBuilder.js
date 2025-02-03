@@ -13,7 +13,6 @@ export default function FormBuilder({formFields, onCancel, defaultData, onSubmit
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form Data Submitted:", formData);
     onSubmit(formData);
   };
   const handleChange = (field, value) => {
@@ -25,7 +24,6 @@ export default function FormBuilder({formFields, onCancel, defaultData, onSubmit
       {
         formFields.map( (field, i)=> {
           if (field?.Type === "select") {
-            console.log((field["multi-select"] && formData[field['CSV column name']] === '') ? [] : formData[field['CSV column name']])
             return (
               <FormControl variant="filled" fullWidth key={i} required={field["Required field"]}>
                 <InputLabel id={`${[field['CSV column name']]}-label`}>
