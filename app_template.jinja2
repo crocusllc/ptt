@@ -11,6 +11,13 @@ from flask_cors import CORS
 from passlib.hash import bcrypt
 from functools import wraps
 
+def is_json(str):
+  try:
+    json.loads(str)
+  except ValueError as e:
+    return False
+  return True
+
 def create_app():
     app = Flask(__name__)
     CORS(app, origins=["*"])
@@ -99,51 +106,60 @@ def create_app():
     @app.route("/file_upload", methods=["POST"])
     @login_required(role_required=["administrator", "editor"])
     def file_upload():
-        data = json.loads(request.form.get('data'))
-
-        file_name = data["file_name"]
-        table_name = data["table_name"]
-        fields = data["fields"]
-        file_content = request.files['file']
-
-        if not file_name or not table_name or not fields or not file_content:
-            return jsonify({"error": "Missing file_name, table_name, fields, or file"}), 400
+        data = request.get_data()
+        json_str = data.decode('utf-8')
+        json_objs = json_str.split('\n')
         
-        # Read file content
-        stream = io.StringIO(file_content.stream.read().decode("utf-8"))
-        csv_reader = csv.DictReader(stream)
-
-        if table_name not in ["student_info", "program_info", "clinical_placement_info"]:
-            return jsonify({"error": "Invalid table_name"}), 400
-
-        rows_to_insert = []
-        for row in csv_reader:
-            row_data = {field: row[field] if row[field] != '' else None for field in fields if field in row}
-            rows_to_insert.append(row_data)
-
-        # Insert data using psycopg2
-        try:
-            if rows_to_insert:
-                # Extract column names
-                columns = list(rows_to_insert[0].keys())
-                values = [[row[col] for col in columns] for row in rows_to_insert]
+        current_app.logger.info(request.files)
         
+        for obj in json_objs:
+            if is_json(obj):
+                metadata = json.loads(obj)
+
+        if (metadata):
+            file_name = metadata["file_name"]
+            table_name = metadata["table_name"]
+            fields = metadata["fields"]
+        
+            file_content = request.files['file']
+
+            if not file_name or not table_name or not fields or not file_content:
+                return jsonify({"error": "Missing file_name, table_name, fields, or file"}), 400
+        
+            # Read file content
+            stream = io.StringIO(file_content.stream.read().decode("utf-8"))
+            csv_reader = csv.DictReader(stream)
+
+            if table_name not in ["student_info", "program_info", "clinical_placement_info"]:
+                return jsonify({"error": "Invalid table_name"}), 400
+
+            rows_to_insert = []
+            for row in csv_reader:
+                row_data = {field: row[field] if row[field] != '' else None for field in fields if field in row}
+                rows_to_insert.append(row_data)
+
+            # Insert data using psycopg2
+            try:
+                if rows_to_insert:
+            # Extract column names
+                    columns = list(rows_to_insert[0].keys())
+                    values = [[row[col] for col in columns] for row in rows_to_insert]
+            
             # Build INSERT query dynamically
-            query = f"""
-            INSERT INTO {table_name} ({', '.join(columns)}) 
-            VALUES ({', '.join(['%s' for _ in columns])})
-            """
-            
+                    query = f"""
+                    INSERT INTO {table_name} ({', '.join(columns)}) 
+                    VALUES ({', '.join(['%s' for _ in columns])})
+                    """
+    
             # Execute batch insert
-            for row in values:
-                cur.execute(query, row)
-            
-            conn.commit()
+                    for row in values:
+                        cur.execute(query, row)
+                
+                    conn.commit()
+            except psycopg2.Error as e:
+                return jsonify({"message": f"Database error: {e}", "file_name": file_name, "table_name": table_name})
 
-        except psycopg2.Error as e:
-            return jsonify({"message": f"Database error: {e}", "file_name": file_name, "table_name": table_name})
-
-        return jsonify({"message": "File uploaded successfully", "file_name": file_name, "table_name": table_name})
+            return jsonify({"message": "File uploaded successfully", "file_name": file_name, "table_name": table_name})
 
     # ========== FILE DOWNLOAD ENDPOINT ==========
     @app.route("/file_download", methods=["POST"])
