@@ -34,7 +34,7 @@ function DownloadDataForm() {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${session.user.accessToken}`
           },
-          body: JSON.stringify({"file_name": "all_records.csv", fields: fieldsSelected}),
+          body: JSON.stringify({"file_name": "all_records.csv", fields: ["id","ihe_email"]}),
         });
 
         if (!response.ok) {
