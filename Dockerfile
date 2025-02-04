@@ -77,9 +77,9 @@ RUN /usr/lib/postgresql/15/bin/pg_ctl \
 && psql -U $PG_USER -p $PG_PORT -d postgres -c "CREATE DATABASE $PG_DB" \
 && psql -U $PG_USER -p $PG_PORT -d $PG_DB -f /scripts/users_ddl.sql \
 && psql -U $PG_USER -p $PG_PORT -d $PG_DB -f /scripts/logs_ddl.sql \
-&& psql -U postgres -d ptt_db -f /scripts/student_info.sql \
-&& psql -U postgres -d ptt_db -f /scripts/clinical_placements.sql \
-&& psql -U postgres -d ptt_db -f /scripts/program_info.sql
+&& psql -U $PG_USER -p $PG_PORT -d $PG_DB -f /scripts/clinical_placements.sql \
+&& psql -U $PG_USER -p $PG_PORT -d $PG_DB -f /scripts/student_info.sql \
+&& psql -U $PG_USER -p $PG_PORT -d $PG_DB -f /scripts/program_info.sql
 
 # Switch back to root so supervisor can manage processes
 USER root

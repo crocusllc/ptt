@@ -18,8 +18,12 @@ services:
       - 5432:5432
       - 3030:5000
   app:
-    build: frontend
+    build: 
+      context: ./
+      dockerfile: ./frontend/Dockerfile
     ports:
       - 3000:3000
     volumes:
+      - ./config.yaml:/app/config.yaml
       - ./frontend/.env:/app/.env
+
