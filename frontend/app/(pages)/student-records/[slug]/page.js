@@ -10,8 +10,10 @@ import getConfigData from "@/app/utils/getConfigs"
 import {IconButton} from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import FormBuilder from "@/app/(pages)/student-records/[slug]/FormBuilder";
+import {SessionProvider, useSession} from "next-auth/react";
 
-export default function StudentRecord() {
+function StudentRecord() {
+  const { data: session } = useSession();
   const params = useParams();
   const slug = params.slug;
 
@@ -19,9 +21,34 @@ export default function StudentRecord() {
   const [addFormEnabled, setAddFormEnabled] = useState(false);
 
   useEffect(()=> {
-    // Fetch fn here
-    setStudentRecordData(student_record_info);
-  }, [])
+    if(session && !studentRecordData) {
+      async function fetchStudentRecordInfo() {
+        try {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/student_record_info`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${session.user.accessToken}`
+            },
+            body: JSON.stringify({student_id: slug})
+          });
+
+          if (!response.ok) {
+            console.error("HTTP Error:", response.status);
+          }
+
+          return await response.json();
+
+        } catch (error) {
+          console.error("Error fetching student record info:", error);
+        }
+      }
+      fetchStudentRecordInfo().then(data => {
+        console.log(data)
+        setStudentRecordData(student_record_info);
+      })
+    }
+  }, [session])
 
   // Get the Student Record Config Data.
   const formData = getConfigData()?.fields.find( el => el?.form?.Name === "Student Records")?.form;
@@ -91,5 +118,12 @@ export default function StudentRecord() {
         }
       </Stack>
     </>
+  );
+}
+export default function StudentRecordPage() {
+  return (
+    <SessionProvider>
+      <StudentRecord />
+    </SessionProvider>
   );
 }

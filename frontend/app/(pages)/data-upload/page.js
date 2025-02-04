@@ -35,10 +35,18 @@ const templatePaths = [
 ]
 
 const uploadForms = [
-  "Upload/Update Student IHE Data:",
-  "Upload new clinical placement data:",
-  "Upload new program and student data:",
-  "Upload new program and student data:"
+  {
+    title: "Upload/Update Student IHE Data",
+    tableName: "student_info"
+  },
+  {
+    title: "Upload new clinical placement data",
+    tableName: "student_info"
+  },
+  {
+    title: "Upload new program and student data",
+    tableName: "student_info"
+  },
 ]
 
 function UploadForms() {
@@ -66,13 +74,12 @@ function UploadForms() {
           </List>
         </HelpBox>
       </Box>
-
       {
-        uploadForms.map( (formTitle, i)=> {
+        uploadForms.map( (form, i)=> {
           return(
             <Card key={i} sx={{ width: "90%", margin: "auto"}}>
               <CardContent>
-                <FileUploadForm title={formTitle}/>
+                <FileUploadForm FormConfig={form} />
               </CardContent>
             </Card>
           )
