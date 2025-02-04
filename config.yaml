@@ -432,7 +432,7 @@ fields:
         Category: Student IHE Enrollment Information
         Order within category: 2
         Data element label: 'Middle Initial'
-        CSV column name: Middleinitial
+        CSV column name: middle_initial
         Type: text
         Validation required: false
         Dropdown or validation values: "N/A"
@@ -477,7 +477,7 @@ fields:
         Category: Student IHE Enrollment Information
         Order within category: 5
         Data element label: 'Birth Date'
-        CSV column name: birth_date
+        CSV column name: birth-date
         Type: date
         Validation required: true
         Dropdown or validation values: "N/A"
@@ -522,7 +522,7 @@ fields:
         Category: Student IHE Enrollment Information
         Order within category: 8
         Data element label: 'Ihe Entry Term'
-        CSV column name: entry_term
+        CSV column name: ihe_entry_term
         Type: text
         Validation required: false
         Dropdown or validation values: "N/A"
@@ -732,7 +732,7 @@ fields:
         Category: Student IHE Enrollment Information
         Order within category: 22
         Data element label: 'Undergraduate Major (If GA Level)'
-        CSV column name: undergraduate_major
+        CSV column name: under_graduate_major
         Type: ""
         Validation required: false
         Dropdown or validation values: "N/A"
@@ -747,7 +747,7 @@ fields:
         Category: Student IHE Enrollment Information
         Order within category: 23
         Data element label: 'American Indian Or Alaska Native'
-        CSV column name: american_indian_or_alaska_native
+        CSV column name: american_indian_or_alaskan_native
         Type: text
         Validation required: false
         Dropdown or validation values: "N/A"
@@ -762,7 +762,7 @@ fields:
         Category: Student IHE Enrollment Information
         Order within category: 24
         Data element label: Asian
-        CSV column name: asian
+        CSV column name: ethnicity_asian
         Type: text
         Validation required: false
         Dropdown or validation values: "N/A"
@@ -807,7 +807,7 @@ fields:
         Category: Student IHE Enrollment Information
         Order within category: 27
         Data element label: 'Middle Eastern Or North African'
-        CSV column name: middle_eastern_or_north_african
+        CSV column name: middle_easter_or_north_african
         Type: text
         Validation required: false
         Dropdown or validation values: "N/A"
