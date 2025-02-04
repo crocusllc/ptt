@@ -11,6 +11,7 @@ services:
         SECRET_KEY: SUPER_SECRET
     volumes:
       - ./app.py:/app/app.py
+      - ./app_template.jinja2:/tmp/app_template.jinja2
       - ./frontend/public/docs:/tmp/csv
       - ./backend/sql:/tmp/sql
     ports:
