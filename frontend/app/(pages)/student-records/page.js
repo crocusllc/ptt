@@ -16,7 +16,7 @@ function StudentRecords() {
   let gridFields = [];
 
   useEffect( ()=> {
-    if (session){
+    if (session && !studentRecords){
       async function fetchStudentRecordInfo() {
         try {
           const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/student_record_info`, {
