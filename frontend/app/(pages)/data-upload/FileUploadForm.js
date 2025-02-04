@@ -2,19 +2,20 @@
 
 import React, { useState } from "react";
 import {Box, Button, Typography, TextField, IconButton} from "@mui/material";
-import {useSession} from "next-auth/react";
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import {CloseIcon} from "next/dist/client/components/react-dev-overlay/internal/icons/CloseIcon";
+import {useAuth} from "@/app/utils/contexts/AuthProvider";
 
 
 const FileUpload = ({FormConfig}) => {
-  const { data: session } = useSession();
   const [selectedFile, setSelectedFile] = useState(null);
   const [open, setOpen] = useState(false);
   const [uploadResponse, setUploadResponse] = useState()
+  const { userSession } = useAuth();
+  console.log(userSession)
 
 
   // Handle file selection
@@ -52,7 +53,7 @@ const FileUpload = ({FormConfig}) => {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/file_upload`, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${session.user.accessToken}`
+          "Authorization": `Bearer ${userSession.user.accessToken}`
         },
         body: formData
       });

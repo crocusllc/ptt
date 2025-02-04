@@ -9,6 +9,8 @@ import Box from "@mui/material/Box";
 import {usePathname} from 'next/navigation'
 import {useState} from "react";
 import {Container} from "@mui/material";
+import {SessionProvider} from "next-auth/react";
+import {AuthProvider} from "@/app/utils/contexts/AuthProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,29 +31,33 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <AppRouterCacheProvider>
-        <body className={`${geistSans.variable} ${geistMono.variable}`}>
-          <Box sx={{
-            display: "grid",
-            gap: "20px",
-            gridTemplateColumns: "80px 1fr"
-          }}>
-            <Box component={"header"} sx={{gridColumn: "1 / 3"}}>
-              <Header userData={userData}/>
+        <SessionProvider>
+          <AuthProvider>
+            <body className={`${geistSans.variable} ${geistMono.variable}`}>
+            <Box sx={{
+              display: "grid",
+              gap: "20px",
+              gridTemplateColumns: "80px 1fr"
+            }}>
+              <Box component={"header"} sx={{gridColumn: "1 / 3"}}>
+                <Header userData={userData}/>
+              </Box>
+              {
+                !noSidebarPages && (
+                  <Box component={"aside"} sx={{gridColumn: "1 / 2"}}>
+                    <MainMenu/>
+                  </Box>
+                )
+              }
+              <Box component={"main"} sx={{gridColumn: noSidebarPages ? "1 / 3" : "2 / 3", paddingBottom: "20px", paddingRight: "20px"}}>
+                <Container maxWidth="xl">
+                  {children}
+                </Container>
+              </Box>
             </Box>
-            {
-              !noSidebarPages && (
-                <Box component={"aside"} sx={{gridColumn: "1 / 2"}}>
-                  <MainMenu/>
-                </Box>
-              )
-            }
-            <Box component={"main"} sx={{gridColumn: noSidebarPages ? "1 / 3" : "2 / 3", paddingBottom: "20px", paddingRight: "20px"}}>
-              <Container maxWidth="xl">
-                {children}
-              </Container>
-            </Box>
-          </Box>
-        </body>
+            </body>
+          </AuthProvider>
+        </SessionProvider>
       </AppRouterCacheProvider>
     </html>
   );

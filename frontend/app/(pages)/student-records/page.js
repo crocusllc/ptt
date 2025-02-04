@@ -3,27 +3,27 @@
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import getConfigData from "@/app/utils/getConfigs"
-import {SessionProvider, useSession} from "next-auth/react";
 import {useEffect, useState} from "react";
+import {useAuth} from "@/app/utils/contexts/AuthProvider";
 
 const getFullRecordLink = (params) => {
   return <a href={`/student-records/${params.row.id}`}>View Full Record</a>;
 };
-function StudentRecords() {
+export default function StudentRecordsPage() {
   // Getting user session data.
-  const { data: session } = useSession();
   const [studentRecords, setStudentRecords] = useState();
   let gridFields = [];
+  const { userSession } = useAuth();
 
   useEffect( ()=> {
-    if (session && !studentRecords){
+    if (userSession && !studentRecords){
       async function fetchStudentRecordInfo() {
         try {
           const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/student_record_info`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${session.user.accessToken}`
+              "Authorization": `Bearer ${userSession.user.accessToken}`
             }
           });
 
@@ -40,7 +40,7 @@ function StudentRecords() {
         setStudentRecords(data)
       });
     }
-  },[session])
+  },[userSession])
 
   // Get Student record fields from config file.
   const studentRecordFormFields = getConfigData()?.fields
@@ -102,10 +102,3 @@ function StudentRecords() {
   );
 }
 
-export default function StudentRecordsPage() {
-  return (
-    <SessionProvider>
-      <StudentRecords />
-    </SessionProvider>
-  );
-}
