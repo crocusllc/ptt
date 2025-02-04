@@ -13,7 +13,6 @@ import HelpBox from "@/app/components/HelpBox/HelpBox";
 import Box from "@mui/material/Box";
 import SaveAltRoundedIcon from '@mui/icons-material/SaveAltRounded';
 import {ListItemButton} from "@mui/material";
-import {SessionProvider} from "next-auth/react";
 
 const templatePaths = [
   {
@@ -49,7 +48,7 @@ const uploadForms = [
   },
 ]
 
-function UploadForms() {
+export default function UploadForms() {
   return (
     <Stack spacing={2} maxWidth={"md"} margin={"auto"}>
       <Box sx={{marginLeft: "auto !important", width:"40px"}}>
@@ -87,13 +86,5 @@ function UploadForms() {
       }
       <Link href={"/upload-log"} aria-label={"Upload Log"}>View Upload Log</Link>
     </Stack>
-  );
-}
-
-export default function DataUploadPage() {
-  return (
-    <SessionProvider>
-      <UploadForms />
-    </SessionProvider>
   );
 }

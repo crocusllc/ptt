@@ -6,11 +6,11 @@ import {
 } from "@mui/material";
 import getConfigData from "@/app/utils/getConfigs";
 import FormBuilder from "@/app/(pages)/student-records/[slug]/FormBuilder";
-import {SessionProvider, useSession} from "next-auth/react";
+import {useAuth} from "@/app/utils/contexts/AuthProvider";
 
+export default function DownloadDataPage() {
+  const { userSession } = useAuth();
 
-function DownloadDataForm() {
-  const { data: session } = useSession();
   const studentRecordFormFields = getConfigData()?.fields
     ?.find( el => el?.form?.Name === "Student Records")?.form;
 
@@ -32,9 +32,9 @@ function DownloadDataForm() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${session.user.accessToken}`
+            "Authorization": `Bearer ${userSession.user.accessToken}`
           },
-          body: JSON.stringify({"file_name": "all_records.csv", fields: fieldsSelected?.length ? fieldsSelected : ""}),
+          body: JSON.stringify({"file_name": "all_records.csv", fields: fieldsSelected?.length ? fieldsSelected : ["*"]}),
         });
 
         if (!response.ok) {
@@ -90,10 +90,3 @@ function DownloadDataForm() {
     </Box>
   );
 };
-export default function DownLoadRecordsPage() {
-  return (
-    <SessionProvider>
-      <DownloadDataForm />
-    </SessionProvider>
-  );
-}
