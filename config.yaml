@@ -477,7 +477,7 @@ fields:
         Category: Student IHE Enrollment Information
         Order within category: 5
         Data element label: 'Birth Date'
-        CSV column name: birth-date
+        CSV column name: birth_date
         Type: date
         Validation required: true
         Dropdown or validation values: "N/A"
