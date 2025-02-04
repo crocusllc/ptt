@@ -15,8 +15,6 @@ const FileUpload = ({FormConfig}) => {
   const [open, setOpen] = useState(false);
   const [uploadResponse, setUploadResponse] = useState()
   const { userSession } = useAuth();
-  console.log(userSession)
-
 
   // Handle file selection
   const handleFileChange = (event) => {
