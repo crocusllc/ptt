@@ -175,26 +175,36 @@ def create_app():
         query_fields = ",".join(str(bit) for bit in fields)
         
         if query_fields == "":
-          query_fields = "*"
-        else:
-          query = f"SELECT {query_fields} from student_info;"
-          cur.execute(query)
-          results = cur.fetchall()
+             query_fields = "*"
 
-          current_app.logger.info("Fetch specified columns")
-          output = io.StringIO()
-          writer = csv.writer(output)
-          writer.writerow(fields)
-          for row in results:
-            writer.writerow([row[field] for field in fields])
+        query = f"SELECT {query_fields} from student_info;"
+        cur.execute(query)
+        results = cur.fetchall()
 
-          output.seek(0)
-          return send_file(
-            io.BytesIO(output.getvalue().encode("utf-8")),
-            mimetype="text/csv",
-            as_attachment=True,
-            download_name=file_name
-          )
+        if len(results) > 1:
+            output = io.StringIO()
+            writer = csv.writer(output)
+
+            if fields == ["*"]:
+                writer.writerow(results[0].keys())
+            else:
+                writer.writerow(fields)
+
+            for row in results:
+                if fields == ["*"]:
+                    writer.writerow([row[field] for field in results[0].keys()])
+                else:
+                    writer.writerow([row[field] for field in fields])
+
+            output.seek(0)
+            return send_file(
+                io.BytesIO(output.getvalue().encode("utf-8")),
+                mimetype="text/csv",
+                as_attachment=True,
+                download_name=file_name
+            )
+
+        return jsonify({"message": "No data available"})
 
     # ========== STUDENT RECORD ENDPOINT ==========
     @app.route("/student_record_info", methods=["GET", "POST"])
