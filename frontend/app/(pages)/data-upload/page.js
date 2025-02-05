@@ -40,11 +40,11 @@ const uploadForms = [
   },
   {
     title: "Upload new clinical placement data",
-    tableName: "student_info"
+    tableName: "clinical_placement_info"
   },
   {
     title: "Upload new program and student data",
-    tableName: "student_info"
+    tableName: "program_info"
   },
 ]
 
