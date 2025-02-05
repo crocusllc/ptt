@@ -122,7 +122,7 @@ def create_app():
         data = request.get_data()
         json_str = data.decode('utf-8')
         json_objs = json_str.split('\n')
-        
+
         for obj in json_objs:
             if is_json(obj):
                 metadata = json.loads(obj)
@@ -191,7 +191,7 @@ def create_app():
         
         if query_fields == "":
              query_fields = "*"
- 
+
         fields_not_date = fields.copy()
 
         start_date = ''
@@ -205,7 +205,7 @@ def create_app():
 
                     if "start" in key and fields[key] != '':
                         start_date = f'AND {key} >= \'{fields[key]}\'::date '
-                    
+
                     if "end" in key and fields[key] != '':
                         end_date = f'AND {key} <= \'{fields[key]}\'::date '
 
@@ -216,7 +216,7 @@ def create_app():
                     fields_not_date.pop(key, None)
 
             conditions = ' AND '.join([f'lower({key}) like lower(\'%{fields_not_date[key]}%\')' for key in fields_not_date])
-        
+
             query_all = f'SELECT * FROM student_info s JOIN clinical_placements c ON s.id=c.student_id JOIN program_info p ON s.id=p.student_id WHERE {conditions} {start_date} {end_date} {exit_date};'
             query_all = query_all.replace("WHERE AND", "WHERE")
         else:
@@ -224,7 +224,7 @@ def create_app():
 
         conn = create_conn()
         cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
-        
+
         cur.execute(query_all)
         results = cur.fetchall()
 
@@ -261,7 +261,7 @@ def create_app():
     @login_required(role_required=["administrator", "viewer"])
     def update_record():
         data = request.get_json() or {}
-        
+
         if (data != {}):
             student_id = data.get("student_id")
             source = data.get("source")
@@ -273,7 +273,7 @@ def create_app():
                 "additional_program_data": "program_info",
                 "clinical": "clinical_placements"
             }
-            
+
             to_update = data
             to_update.pop('student_id', None)
             to_update.pop('source', None)
@@ -286,12 +286,12 @@ def create_app():
 
             cur.execute(query)
             conn.commit()
-            
+
             return jsonify({"message": f"The student_id {student_id} was update successfully."})
 
 
     # ========== STUDENT RECORD ENDPOINT ==========
-    @app.route("/student_record_info", methods=["GET", "POST", "PATCH"])
+    @app.route("/student_record_info", methods=["GET", "POST"])
     @login_required(role_required=["administrator", "viewer"])
     def student_record():
         conn = create_conn()
@@ -302,10 +302,10 @@ def create_app():
         
             if (data != {}):
                 student_id = data.get("student_id")
-                
+
                 cur.execute("SELECT * from student_info where id=%s;", (student_id,))
                 result = cur.fetchone()
-            
+
                 if result is not None:
                     return jsonify(result)
                 else:
