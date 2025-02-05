@@ -55,5 +55,6 @@ export const { handlers, auth } = NextAuth({
   },
   pages: {
     signIn: "/login", // Redirect to custom login page
+    signOut: "/login"
   },
 })

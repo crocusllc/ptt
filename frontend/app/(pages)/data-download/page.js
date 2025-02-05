@@ -26,6 +26,10 @@ export default function DownloadDataPage() {
 
   // Handle download actions
   const handleDownload = async (fieldsSelected) => {
+    let fieldsToDownLoad = typeof fieldsSelected === 'object'
+      ? Object.keys(fieldsSelected)
+      : ["*"];
+
     {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/file_download`, {
@@ -34,7 +38,7 @@ export default function DownloadDataPage() {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${userSession.user.accessToken}`
           },
-          body: JSON.stringify({"file_name": "all_records.csv", fields: fieldsSelected?.length ? fieldsSelected : ["*"]}),
+          body: JSON.stringify({"file_name": "all_records.csv", fields: fieldsToDownLoad}),
         });
 
         if (!response.ok) {
