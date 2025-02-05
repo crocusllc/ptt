@@ -206,8 +206,42 @@ def create_app():
 
         return jsonify({"message": "No data available"})
 
+    # ========== UPDATE RECORD ENDPOINT ==========
+    @app.route("/update_data", methods=["POST"])
+    @login_required(role_required=["administrator", "viewer"])
+    def update_record():
+        data = request.get_json() or {}
+        
+        if (data != {}):
+            student_id = data.get("student_id")
+            source = data.get("source")
+
+            # Map source to tables
+            source_to_table = {
+                "additional_student_data": "student_info",
+                "student": "student_info",
+                "additional_program_data": "program_info",
+                "clinical": "clinical_placements"
+            }
+            
+            to_update = data
+            to_update.pop('student_id', None)
+            to_update.pop('source', None)
+
+            columns = {"a":'a1',"b":'2',"c":'3'}
+
+            set_values = ', '.join([f'SET {key} = \'{to_update[key]}\'' for key in to_update])
+
+            query = f'UPDATE {source_to_table[source]} {set_values} WHERE id = {student_id}'
+
+            cur.execute(query)
+            conn.commit()
+            
+            return jsonify({"message": f"The student_id {student_id} was update successfully."})
+
+
     # ========== STUDENT RECORD ENDPOINT ==========
-    @app.route("/student_record_info", methods=["GET", "POST"])
+    @app.route("/student_record_info", methods=["GET", "POST", "PATCH"])
     @login_required(role_required=["administrator", "viewer"])
     def student_record():
       if request.method == 'POST':
