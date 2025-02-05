@@ -141,7 +141,7 @@ def create_app():
             stream = io.StringIO(file_content.stream.read().decode("utf-8"))
             csv_reader = csv.DictReader(stream)
 
-            if table_name not in ["student_info", "program_info", "clinical_placement_info"]:
+            if table_name not in ["student_info", "program_info", "clinical_placements"]:
                 return jsonify({"error": "Invalid table_name"}), 400
 
             rows_to_insert = []
