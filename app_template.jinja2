@@ -192,7 +192,7 @@ def create_app():
         if query_fields == "":
              query_fields = "*"
  
-        fields_not_date = fields
+        fields_not_date = fields.copy()
 
         start_date = ''
         end_date = ''
