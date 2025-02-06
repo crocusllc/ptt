@@ -19,6 +19,7 @@ function StudentRecord() {
 
   const [studentRecordData, setStudentRecordData] = useState();
   const [addFormEnabled, setAddFormEnabled] = useState(false);
+  const categories = getConfigData()?.categories;
 
   useEffect(()=> {
     if(session && !studentRecordData) {
@@ -43,9 +44,9 @@ function StudentRecord() {
           console.error("Error fetching student record info:", error);
         }
       }
+
       fetchStudentRecordInfo().then(data => {
-        console.log(data)
-        setStudentRecordData(student_record_info);
+        setStudentRecordData(data);
       })
     }
   }, [session])
@@ -54,9 +55,9 @@ function StudentRecord() {
   const formData = getConfigData()?.fields.find( el => el?.form?.Name === "Student Records")?.form;
   const fieldKeys =  Object.keys(formData)
   let formCategories = {}
-  // Grouping fields by category
+  // Grouping fields by category.
   fieldKeys.forEach( el => {
-    if(formData[el]?.Category) {
+    if(formData[el]?.Category && formData[el]?.Category !== "Global") {
       if(formCategories[formData[el].Category]) {
         formCategories[formData[el].Category].push(formData[el])
       } else {
@@ -70,8 +71,6 @@ function StudentRecord() {
     }
   })
 
-  const categories = getConfigData()?.categories;
-
   const handleSubmit = (data) => {
     alert("Submitted data: " + JSON.stringify(data));
   };
@@ -82,14 +81,14 @@ function StudentRecord() {
       <Stack spacing={2} sx={{maxWidth: "768px"}}>
         {
           studentRecordData &&
-          Object.keys(studentRecordData).map( catName => {
+          Object.keys(categories).map( catKey => {
             return (
-              <Stack spacing={2} key={catName} sx={{padding: "16px", border: "1px solid #ccc", borderRadius: "4px",  position: "relative"}}>
+              <Stack spacing={2} key={catKey} sx={{padding: "16px", border: "1px solid #ccc", borderRadius: "4px",  position: "relative"}}>
                 <Box component={"h2"} sx={{marginBottom: "10px"}}>
-                  {catName}
+                  {categories[catKey].label}
                 </Box>
                 {
-                  (categories[catName]?.addable && !addFormEnabled) && (
+                  (categories[catKey]?.addable && !addFormEnabled) && (
                     <Stack direction="row" sx={{position: "absolute", right:"6px", top:"10px", marginTop: "0 !important"}}>
                       <IconButton aria-label="add" onClick={()=>setAddFormEnabled(true)}>
                         <AddCircleIcon />
@@ -98,19 +97,22 @@ function StudentRecord() {
                   )
                 }
                 {
-                  (categories[catName]?.addable && addFormEnabled) && (
-                    <FormBuilder formFields={formCategories[catName]} onCancel={()=>setAddFormEnabled(false)} onSubmit={handleSubmit}/>
+                  (categories[catKey]?.addable && addFormEnabled) && (
+                    <FormBuilder formFields={formCategories[catKey]} onCancel={()=>setAddFormEnabled(false)} onSubmit={handleSubmit}/>
                   )
                 }
                 {
-                  studentRecordData[catName].map( (item, i) => {
-                    const isMultiple = studentRecordData[catName].length > 1;
+
+                  Array.isArray(studentRecordData[catKey === "additional_student_info" ? "student_info" : catKey]) &&
+                  studentRecordData[catKey === "additional_student_info" ? "student_info" : catKey].map( (item, i) => {
+                    const isMultiple = studentRecordData[catKey].length > 1;
                     return (
                       <Stack key={i} sx={{ border: `${ isMultiple ? "1px solid #ccc" : "none" }`, borderRadius: "4px", position:"relative", padding:`${ isMultiple ? "10px" : 0 }` }}>
-                        <CategoryManager displayData={item} formData={formCategories[catName]} config={categories[catName]} />
+                        <CategoryManager displayData={item} formData={formCategories[catKey]} config={categories[catKey]} />
                       </Stack>
                     )
                   })
+
                 }
               </Stack>
             )
