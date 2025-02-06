@@ -61,7 +61,7 @@ fields:
         Validation required: false
         Dropdown or validation values: "In progress,Complete,Withdrawn"
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: false
         Use as filter in View/Edit search page?: false
@@ -152,7 +152,7 @@ fields:
         Validation required: false
         Dropdown or validation values: 'Student Teaching,Residency,Teacher Of Record,Administrator Internship'
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: false
         Use as filter in View/Edit search page?': true
@@ -167,7 +167,7 @@ fields:
         Validation required: false
         Dropdown or validation values: 'Yes,No'
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: false
         Use as filter in View/Edit search page?: false
@@ -182,7 +182,7 @@ fields:
         Validation required: true
         Dropdown or validation values: "N/A"
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: false
         Use as filter in View/Edit search page?: false
@@ -197,7 +197,7 @@ fields:
         Validation required: true
         Dropdown or validation values: "N/A"
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: false
         Use as filter in View/Edit search page?: false
@@ -212,7 +212,7 @@ fields:
         Validation required: true
         Dropdown or validation values: 'Yes,No'
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: false
         Use as filter in View/Edit search page?: false
@@ -227,7 +227,7 @@ fields:
         Validation required: false
         Dropdown or validation values: 'PK,K,1,2,3,4,5,6,7,8,9-12'
         multi-select: true
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: false
         Use as filter in View/Edit search page?: false
@@ -272,7 +272,7 @@ fields:
         Validation required: false
         Dropdown or validation values: 'Springfield Public Schools,Another example school'
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: false
         Use as filter in View/Edit search page?: false
@@ -287,7 +287,7 @@ fields:
         Validation required: false
         Dropdown or validation values: 'Springfield General Hospital,Riverview Nursing Academy,Harborview Rehabilitation Center,Pine Valley Community Clinic'
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: false
         Use as filter in View/Edit search page?: false
@@ -332,7 +332,7 @@ fields:
         Validation required: false
         Dropdown or validation values: "N/A"
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: false
         Use as filter in View/Edit search page?: false
@@ -347,7 +347,7 @@ fields:
         Validation required: false
         Dropdown or validation values: "N/A"
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: false
         Use as filter in View/Edit search page?: false
@@ -407,7 +407,7 @@ fields:
         Validation required: false
         Dropdown or validation values: "N/A"
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: false
         Use as filter in View/Edit search page?: true
@@ -422,7 +422,7 @@ fields:
         Validation required: false
         Dropdown or validation values: "N/A"
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: true
         Use as filter in View/Edit search page?: true
@@ -437,7 +437,7 @@ fields:
         Validation required: false
         Dropdown or validation values: "N/A"
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: false
         Use as filter in View/Edit search page?: false
@@ -452,7 +452,7 @@ fields:
         Validation required: false
         Dropdown or validation values: "N/A"
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: true
         Use as filter in View/Edit search page?: true
@@ -482,7 +482,7 @@ fields:
         Validation required: true
         Dropdown or validation values: "N/A"
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: false
         Use as filter in View/Edit search page?: false
@@ -497,7 +497,7 @@ fields:
         Validation required: false
         Dropdown or validation values: "N/A"
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: true
         Use as filter in View/Edit search page?: false
@@ -527,7 +527,7 @@ fields:
         Validation required: false
         Dropdown or validation values: "N/A"
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: true
         Use as filter in View/Edit search page?: false
@@ -542,7 +542,7 @@ fields:
         Validation required: false
         Dropdown or validation values: "N/A"
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: true
         Use as filter in View/Edit search page?: false
@@ -572,7 +572,7 @@ fields:
         Validation required: true
         Dropdown or validation values: 'Current Enrollee,On Leave,Graduated,Withdrawn'
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: true
         Use as filter in View/Edit search page?: false
@@ -587,7 +587,7 @@ fields:
         Validation required: false
         Dropdown or validation values: "N/A"
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: true
         Use as filter in View/Edit search page?: false
@@ -602,7 +602,7 @@ fields:
         Validation required: true
         Dropdown or validation values: 'Undergraduate,Graduate/Post-Baccalaureate'
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: true
         Use as filter in View/Edit search page?': Y
@@ -632,7 +632,7 @@ fields:
         Validation required: false
         Dropdown or validation values: "N/A"
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: true
         Use as filter in View/Edit search page?: true
@@ -647,7 +647,7 @@ fields:
         Validation required: false
         Dropdown or validation values: "N/A"
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: true
         Use as filter in View/Edit search page?: false
@@ -707,7 +707,7 @@ fields:
         Validation required: false
         Dropdown or validation values: "N/A"
         multi-select: false
-        Required field: true
+        Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: true
         Use as filter in View/Edit search page?: false
