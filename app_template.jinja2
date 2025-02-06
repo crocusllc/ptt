@@ -18,28 +18,35 @@ def is_json(str):
     return False
   return True
 
+def create_conn():
+    # Set up DB engine
+    conn = psycopg2.connect(
+        dbname="{{PG_DB}}",
+        user="{{PG_USER}}",
+        password="{{PG_PWD}}",
+        host="{{PG_HOST}}",
+        port="{{PG_PORT}}"
+    )
+
+    return conn
+
 def create_app():
     app = Flask(__name__)
     CORS(app, origins=["*"])
 
     # Set up DB engine
     app.config["SECRET_KEY"] = "{{SECRET_KEY}}"
-    # Set up DB engine
-    conn = psycopg2.connect(
-      dbname="{{PG_DB}}",
-      user="{{PG_USER}}",
-      password="{{PG_PWD}}",
-      host="{{PG_HOST}}",
-      port="{{PG_PORT}}"
-    )
-    cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
- 
+
     @app.route('/')
     def hello():
         # Simple health check or DB connection check
         try:
+            conn = create_conn()
+            cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
             cur.execute("SELECT version();")
             db_version = cur.fetchone()
+            cur.close()
+            conn.close()
             return f"Hello, World! PostgreSQL version: {db_version}"
         except Exception as e:
             return f"Error connecting to DB: {e}"
@@ -78,8 +85,14 @@ def create_app():
         if not username or not password:
             return jsonify({"error": "Missing username/password"}), 400
 
+        conn = create_conn()
+        cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+
         cur.execute("SELECT user_role, password_hash, username from users where username=%s;", (username,))
         user = cur.fetchone()
+
+        cur.close()
+        conn.close()
 
         if not user:
             return jsonify({"error": "Invalid username or password"}), 401
@@ -110,8 +123,6 @@ def create_app():
         json_str = data.decode('utf-8')
         json_objs = json_str.split('\n')
         
-        current_app.logger.info(request.files)
-        
         for obj in json_objs:
             if is_json(obj):
                 metadata = json.loads(obj)
@@ -130,7 +141,7 @@ def create_app():
             stream = io.StringIO(file_content.stream.read().decode("utf-8"))
             csv_reader = csv.DictReader(stream)
 
-            if table_name not in ["student_info", "program_info", "clinical_placement_info"]:
+            if table_name not in ["student_info", "program_info", "clinical_placements"]:
                 return jsonify({"error": "Invalid table_name"}), 400
 
             rows_to_insert = []
@@ -150,12 +161,16 @@ def create_app():
                     INSERT INTO {table_name} ({', '.join(columns)}) 
                     VALUES ({', '.join(['%s' for _ in columns])})
                     """
-    
+                    conn = create_conn()
+                    cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
             # Execute batch insert
                     for row in values:
                         cur.execute(query, row)
                 
                     conn.commit()
+
+                    cur.close()
+                    conn.close()
             except psycopg2.Error as e:
                 return jsonify({"message": f"Database error: {e}", "file_name": file_name, "table_name": table_name})
 
@@ -178,8 +193,15 @@ def create_app():
              query_fields = "*"
 
         query = f"SELECT {query_fields} from student_info;"
+        
+        conn = create_conn()
+        cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+        
         cur.execute(query)
         results = cur.fetchall()
+
+        cur.close()
+        conn.close()
 
         if len(results) > 1:
             output = io.StringIO()
@@ -210,25 +232,31 @@ def create_app():
     @app.route("/student_record_info", methods=["GET", "POST"])
     @login_required(role_required=["administrator", "viewer"])
     def student_record():
-      if request.method == 'POST':
-        data = request.get_json() or {}
-        
-        if (data != {}):
-          student_id = data.get("student_id")
-        
-          cur.execute("SELECT * from student_info where id=%s;", (student_id,))
-          result = cur.fetchone()
-          
-          if result is not None:
-            return jsonify(result)
-          else:
-            return jsonify({"message": "The student_id doesn't exist"})
+        conn = create_conn()
+        cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
-      if request.method == 'GET':
-        cur.execute("SELECT * from student_info;")
-        result = cur.fetchall()
+        if request.method == 'POST':
+            data = request.get_json() or {}
         
-        return jsonify(result)
+            if (data != {}):
+                student_id = data.get("student_id")
+                
+                cur.execute("SELECT * from student_info where id=%s;", (student_id,))
+                result = cur.fetchone()
+            
+                if result is not None:
+                    return jsonify(result)
+                else:
+                    return jsonify({"message": "The student_id doesn't exist"})
+
+        if request.method == 'GET':
+            cur.execute("SELECT * from student_info;")
+            result = cur.fetchall()
+        
+            return jsonify(result)
+
+        cur.close()
+        conn.close()
 
     return app
 

@@ -21,30 +21,38 @@ const FileUpload = ({FormConfig}) => {
     setSelectedFile(event.target.files[0]);
   };
 
+  const readCSVFile = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        const content = e.target.result;
+        const rows = content.split("\n");
+        const csvHeaders = rows[0].split(",");
+
+        console.log("CSV Headers:", csvHeaders);
+
+        const jsonData = {
+          file_name: file.name,
+          table_name: FormConfig?.tableName,
+          fields: csvHeaders,
+        };
+
+        resolve(jsonData); // Resolve the Promise with jsonData
+      };
+
+      reader.onerror = (e) => reject(e.target.error);
+      reader.readAsText(file);
+    });
+  };
+
   // Handle file upload
   const handleUpload = async () => {
     const file = selectedFile;
     const formData = new FormData();
-
     // Append file
     formData.append("file", file);
-
-    // Append JSON data as a Blob
-    const jsonData = {
-      file_name: "IHE_data_file.csv",
-      table_name: FormConfig?.tableName,
-      fields: [
-        "id", "first_name", "Middleinitial", "last_name", "partial_ssn", "birth_date",
-        "ihe_email", "alternate_email", "entry_term", "ihe_expected_graduation_term",
-        "ihe_exit_date", "ihe_enrollment_status", "program_enrollment_term", "academic_level",
-        "academic_award_received", "program_name", "program_enrollment_status", "endorsement_1",
-        "endorsement_2", "content_concentration_area", "program_entry_gpa", "program_completion_gpa",
-        "undergraduate_major", "american_indian_or_alaska_native", "asian", "black_or_african_american",
-        "hispanic_or_latino", "middle_eastern_or_north_african", "native_hawaiian_or_pacific_islander",
-        "white", "gender"
-      ]
-    };
-
+    const jsonData = await readCSVFile(file);
     formData.append("data", new Blob([JSON.stringify(jsonData)], { type: "application/json" }));
 
     try {
