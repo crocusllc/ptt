@@ -265,7 +265,8 @@ def create_app():
                 conn.commit()
                 
                 return jsonify({"message": f"The student_id {student_id} was update successfully."})
-            else if id is None:
+            
+            if id is None:
                 columns = ', '.join([f'{key}' for key in to_update])
                 values = ', '.join([f'\'{to_update[key]}\'' for key in to_update])
                 
