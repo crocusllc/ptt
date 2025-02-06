@@ -34,7 +34,7 @@ fields:
         Type: select
         Validation required: false
         Dropdown or validation values: "Yes,No"
-        Support multi select: false
+        multi-select: false
         Required field: false
         Include in bulk upload: true
         Display on Student Record page: true
@@ -94,7 +94,7 @@ fields:
         Type: select
         Validation required: false
         Dropdown or validation values: "Spanish,Navajo,Keres,Zuni,Other (Text Entry)"
-        multi-select: true
+        multi-select: false
         Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: false
