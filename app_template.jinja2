@@ -296,7 +296,22 @@ def create_app():
                 result = cur.fetchone()
             
                 if result is not None:
-                    return jsonify(result)
+                    result_student = result
+
+                    page_result = {}
+                    page_result['student_info'] = result_student
+
+                    cur.execute("SELECT * from program_info where student_id=%s;", (student_id,))
+                    result_program = cur.fetchall()
+
+                    page_result['program_info'] = result_program
+
+                    cur.execute("SELECT * from clinical_placements where student_id=%s;", (student_id,))
+                    result_clinical = cur.fetchall()
+
+                    page_result['clinical_placements'] = result_clinical
+
+                    return jsonify(page_result)
                 else:
                     return jsonify({"message": "The student_id doesn't exist"})
 
