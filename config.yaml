@@ -7,15 +7,19 @@ theme:
 
 --- # Categories
 categories:
-  "Additional Program Information":
-    editable: true
-  "Additional Student Information":
-    editable: true
-  'Culminating Clinical Placement':
+  student_info:
+    label: "Student IHE Enrollment Information"
+    editable: false
+  clinical_placements:
+    label: "Culminating Clinical Placement"
     editable: true
     addable: true
-  'Student IHE Enrollment Information':
-    editable: false
+  program_info:
+    label: "Additional Program Information"
+    editable: true
+  additional_student_info:
+    label: "Additional Student Information"
+    editable: true
 
 --- # fields
 fields:
@@ -23,10 +27,10 @@ fields:
       Name: Student Records
       API_Name: "student_record_info"
       field-1:
-        Category: "Additional Program Information" #esta es la seccion api/Additional_Program_Information/id_student
+        Category: program_info # api/Additional_Program_Information/id_student
         Order within category: 1 #orden
-        Data element label: "Licensure Program Requirements Met on Entry" #etiqueta a pintar
-        CSV column name: "licensure_program_requirements_met_on_entry" #nombre en la ddbb y en el csv
+        Data element label: "Licensure Program Requirements Met on Entry"
+        CSV column name: "licensure_program_requirements_met_on_entry" #name used in the CSV and DB
         Type: select
         Validation required: false
         Dropdown or validation values: "Yes,No"
@@ -38,7 +42,7 @@ fields:
         Use-as-filter-on-Download-page: false
         Include-in-download-file: true
       field-2:
-        Category: "Additional Program Information" #seccion en la forma de student records mover a que diga section pasgina view/edit y forma student records
+        Category: program_info
         Order within category: 2
         Data element label: If no, please explain
         CSV column name: "licensure_program_requirements_notes"
@@ -53,13 +57,13 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-3:
-        Category: "Additional Program Information"
+        Category: program_info
         Order within category: 3
         Data element label: "Program Completion Status"
         CSV column name: "program_completion_status"
         Type: select
         Validation required: false
-        Dropdown or validation values: "In progress,Complete,Withdrawn"
+        Dropdown or validation values: "In progress,Complete,Withdrawn,pIn progress"
         multi-select: false
         Required field: true
         Include in bulk upload?: true
@@ -68,7 +72,7 @@ fields:
         Use as filter on Download page?: true
         Include in download file: true
       field-4:
-        Category: "Additional Program Information"
+        Category: program_info
         Order within category: 4
         Data element label: "Program Completion Notes"
         CSV column name: "program_completion_notes"
@@ -83,7 +87,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-5:
-        Category: "Additional Student Information"
+        Category: additional_student_info
         Order within category: 1
         Data element label: "Language(s) Spoken Other Than English"
         CSV column name: "focus_languages"
@@ -98,7 +102,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-6:
-        Category: "Additional Student Information"
+        Category: additional_student_info
         Order within category: 2
         Data element label: "If you selected other, please specify"
         CSV column name: "other_languages"
@@ -113,7 +117,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-7:
-        Category: 'Additional Student Information'
+        Category: additional_student_info
         Order within category': 3
         Data element label: 'First Generation Status'
         CSV column name: first_generation_status
@@ -128,7 +132,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-8:
-        Category: 'Additional Student Information'
+        Category: additional_student_info
         Order within category': 4
         Data element label: 'Licensure #'
         CSV column name: licensure_number
@@ -143,7 +147,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-9:
-        Category: 'Culminating Clinical Placement'
+        Category: 'clinical_placements'
         Order within category': 1
         Data element label: 'Placement Type'
         CSV column name: placement_type
@@ -159,7 +163,7 @@ fields:
         Use as filter on Download page?: true
         Include in download file: true
       field-10:
-        Category: 'Culminating Clinical Placement'
+        Category: 'clinical_placements'
         Order within category': 2
         Data element label: 'Registered Apprentice'
         CSV column name: registered_apprentice
@@ -174,7 +178,7 @@ fields:
         Use as filter on Download page?: true
         Include in download file: true
       field-11:
-        Category: 'Culminating Clinical Placement'
+        Category: 'clinical_placements'
         Order within category': 3
         Data element label: 'Placement Start Date'
         CSV column name: placement_start_date
@@ -189,7 +193,7 @@ fields:
         Use as filter on Download page?: true
         Include in download file: true
       field-12:
-        Category: 'Culminating Clinical Placement'
+        Category: 'clinical_placements'
         Order within category: 4
         Data element label: 'Placement End Date'
         CSV column name: placement_end_date
@@ -204,7 +208,7 @@ fields:
         Use as filter on Download page?: true
         Include in download file: true
       field-13:
-        Category: 'Culminating Clinical Placement'
+        Category: 'clinical_placements'
         Order within category: 5
         Data element label: 'Placement Alignment'
         CSV column name: placement_alignment
@@ -219,14 +223,14 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-14:
-        Category: 'Culminating Clinical Placement'
+        Category: 'clinical_placements'
         Order within category: 6
         Data element label: 'Placement Grade Level'
         CSV column name: placement_grade_level
         Type: select
         Validation required: false
-        Dropdown or validation values: 'PK,K,1,2,3,4,5,6,7,8,9-12'
-        multi-select: true
+        Dropdown or validation values: 'PK,K,1,2,3,4,5,6,7,8,9,9-12'
+        multi-select: false
         Required field: true
         Include in bulk upload?: true
         Display on Student Record page?: false
@@ -234,14 +238,14 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-15:
-        Category: 'Culminating Clinical Placement'
+        Category: 'clinical_placements'
         Order within category: 7
         Data element label: 'Placement Licensure Level'
         CSV column name: placement_licensure_level
         Type: select
         Validation required: false
         Dropdown or validation values: 'Birth-PreK,PreK-3,Elementary,K-8,Secondary 7-12'
-        multi-select: true
+        multi-select: false
         Required field: false
         Include in bulk upload?: true
         Display on Student Record page?: false
@@ -249,7 +253,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-16:
-        Category: 'Culminating Clinical Placement'
+        Category: 'clinical_placements'
         Order within category: 8
         Data element label: 'Placement Content Area'
         CSV column name: placement_content_area
@@ -264,13 +268,13 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-17:
-        Category: 'Culminating Clinical Placement'
+        Category: 'clinical_placements'
         Order within category: 9
         Data element label: 'Placement District'
         CSV column name: placement_district
         Type: select
         Validation required: false
-        Dropdown or validation values: 'Springfield Public Schools,Another example school'
+        Dropdown or validation values: 'Springfield Public Schools,Another example school,District 5'
         multi-select: false
         Required field: true
         Include in bulk upload?: true
@@ -279,13 +283,13 @@ fields:
         Use as filter on Download page?: true
         Include in download file: true
       field-18:
-        Category: 'Culminating Clinical Placement'
+        Category: 'clinical_placements'
         Order within category: 10
         Data element label: 'Placement School'
         CSV column name: placement_school
         Type: select
         Validation required: false
-        Dropdown or validation values: 'Springfield General Hospital,Riverview Nursing Academy,Harborview Rehabilitation Center,Pine Valley Community Clinic'
+        Dropdown or validation values: 'School 5,Springfield General Hospital,Riverview Nursing Academy,Harborview Rehabilitation Center,Pine Valley Community Clinic'
         multi-select: false
         Required field: true
         Include in bulk upload?: true
@@ -294,7 +298,7 @@ fields:
         Use as filter on Download page?: true
         Include in download file: true
       field-19:
-        Category: 'Culminating Clinical Placement'
+        Category: 'clinical_placements'
         Order within category: 11
         Data element label: 'Principal Name'
         CSV column name: principal_name
@@ -309,7 +313,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-20:
-        Category: 'Culminating Clinical Placement'
+        Category: 'clinical_placements'
         Order within category: 12
         Data element label: 'Principal Email'
         CSV column name: principal_email
@@ -324,7 +328,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-21:
-        Category: 'Culminating Clinical Placement'
+        Category: 'clinical_placements'
         Order within category: 13
         Data element label: 'Mentor Teacher Name'
         CSV column name: mentor_teacher_name
@@ -339,7 +343,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-22:
-        Category: 'Culminating Clinical Placement'
+        Category: 'clinical_placements'
         Order within category: 14
         Data element label: 'Mentor Teacher Email'
         CSV column name: mentor_teacher_email
@@ -354,7 +358,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-23:
-        Category: 'Culminating Clinical Placement'
+        Category: 'clinical_placements'
         Order within category: 15
         Data element label: 'Additional Mentor Teacher Name'
         CSV column name: additional_mentor_teacher_name
@@ -369,7 +373,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-24:
-        Category: 'Culminating Clinical Placement'
+        Category: 'clinical_placements'
         Order within category: 16
         Data element label: 'Additional Mentor Teacher Email'
         CSV column name: additional_mentor_teacher_email
@@ -384,7 +388,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-25:
-        Category: 'Culminating Clinical Placement'
+        Category: 'clinical_placements'
         Order within category: 17
         Data element label: Notes
         CSV column name: notes
@@ -414,7 +418,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-27:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 1
         Data element label: 'First Name'
         CSV column name: first_name
@@ -429,7 +433,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-28:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 2
         Data element label: 'Middle Initial'
         CSV column name: middle_initial
@@ -444,7 +448,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-29:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 3
         Data element label: 'Last Name'
         CSV column name: last_name
@@ -459,7 +463,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-30:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 4
         Data element label: 'Last 5 Digits Of SSN'
         CSV column name: partial_ssn
@@ -474,7 +478,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file:  'Admin Only'
       field-31:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 5
         Data element label: 'Birth Date'
         CSV column name: birth_date
@@ -489,7 +493,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file:  'Admin Only'
       field-32:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 6
         Data element label: 'IHE Email'
         CSV column name: ihe_email
@@ -504,7 +508,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-33:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 7
         Data element label: 'Alternate Email'
         CSV column name: alternate_email
@@ -519,7 +523,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-34:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 8
         Data element label: 'Ihe Entry Term'
         CSV column name: ihe_entry_term
@@ -534,7 +538,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-35:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 9
         Data element label: 'IHE Expected Graduation Term'
         CSV column name: ihe_expected_graduation_term
@@ -549,7 +553,7 @@ fields:
         Use as filter on Download page?: true
         Include in download file: true
       field-36:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 10
         Data element label: 'IHE Exit Date'
         CSV column name: ihe_exit_date
@@ -564,7 +568,7 @@ fields:
         Use as filter on Download page?: true
         Include in download file: true
       field-37:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 11
         Data element label: 'IHE Enrollment Status'
         CSV column name: ihe_enrollment_status
@@ -579,7 +583,7 @@ fields:
         Use as filter on Download page?: true
         Include in download file: true
       field-38:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 12
         Data element label: 'Program Enrollment Term'
         CSV column name: program_enrollment_term
@@ -594,7 +598,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-39:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 13
         Data element label: 'Academic Level'
         CSV column name: academic_level
@@ -609,7 +613,7 @@ fields:
         Use as filter on Download page?: true
         Include in download file: true
       field-40:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 14
         Data element label: 'Academic Award Received'
         CSV column name: academic_award_received
@@ -624,7 +628,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-41:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 15
         Data element label: 'Program Name'
         CSV column name: program_name
@@ -639,7 +643,7 @@ fields:
         Use as filter on Download page?: true
         Include in download file: true
       field-42:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 16
         Data element label: 'Program Enrollment Status (FT/PT)'
         CSV column name: program_enrollment_status
@@ -654,7 +658,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-43:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 17
         Data element label: 'Endorsement 1'
         CSV column name: endorsement_1
@@ -669,7 +673,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-44:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 18
         Data element label: 'Endorsement 2'
         CSV column name: endorsement_2
@@ -684,7 +688,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-45:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 19
         Data element label: 'Content Concentration Area (For Secondary 7-12 And Specialty Licenses Only)'
         CSV column name: content_concentration_area
@@ -699,7 +703,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-46:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 20
         Data element label: 'Program Entry GPA'
         CSV column name: program_entry_gpa
@@ -714,7 +718,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-47:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 21
         Data element label: 'Program Completion GPA'
         CSV column name: program_completion_gpa
@@ -729,7 +733,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-48:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 22
         Data element label: 'Undergraduate Major (If GA Level)'
         CSV column name: under_graduate_major
@@ -744,7 +748,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-49:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 23
         Data element label: 'American Indian Or Alaska Native'
         CSV column name: american_indian_or_alaskan_native
@@ -759,7 +763,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file:  'Admin Only'
       field-50:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 24
         Data element label: Asian
         CSV column name: ethnicity_asian
@@ -774,7 +778,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file:  'Admin Only'
       field-51:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 25
         Data element label: 'Black Or African American'
         CSV column name: black_or_african_american
@@ -789,7 +793,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file:  'Admin Only'
       field-52:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 26
         Data element label: 'Hispanic Or Latino'
         CSV column name: hispanic_or_latino
@@ -804,7 +808,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file:  'Admin Only'
       field-53:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 27
         Data element label: 'Middle Eastern Or North African'
         CSV column name: middle_easter_or_north_african
@@ -819,7 +823,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file:  'Admin Only'
       field-54:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 28
         Data element label: 'Native Hawaiian Or Pacific Islander'
         CSV column name: native_hawaiian_or_pacific_islander
@@ -834,7 +838,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file:  'Admin Only'
       field-55:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 29
         Data element label: White
         CSV column name: white
@@ -849,7 +853,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file:  'Admin Only'
       field-56:
-        Category: Student IHE Enrollment Information
+        Category: 'student_info'
         Order within category: 30
         Data element label: Gender
         CSV column name: gender
