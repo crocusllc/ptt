@@ -10,10 +10,10 @@ import getConfigData from "@/app/utils/getConfigs"
 import {IconButton} from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import FormBuilder from "@/app/(pages)/student-records/[slug]/FormBuilder";
-import {SessionProvider, useSession} from "next-auth/react";
+import {useAuth} from "@/app/utils/contexts/AuthProvider";
 
-function StudentRecord() {
-  const { data: session } = useSession();
+export default function StudentRecordPage() {
+  const { userSession } = useAuth();
   const params = useParams();
   const slug = params.slug;
 
@@ -22,14 +22,14 @@ function StudentRecord() {
   const categories = getConfigData()?.categories;
 
   useEffect(()=> {
-    if(session && !studentRecordData) {
+    if(userSession && !studentRecordData) {
       async function fetchStudentRecordInfo() {
         try {
           const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/student_record_info`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${session.user.accessToken}`
+              "Authorization": `Bearer ${userSession.user.accessToken}`
             },
             body: JSON.stringify({student_id: slug})
           });
@@ -49,7 +49,7 @@ function StudentRecord() {
         setStudentRecordData(data);
       })
     }
-  }, [session])
+  }, [userSession])
 
   // Get the Student Record Config Data.
   const formData = getConfigData()?.fields.find( el => el?.form?.Name === "Student Records")?.form;
@@ -102,13 +102,11 @@ function StudentRecord() {
                   )
                 }
                 {
-
-                  Array.isArray(studentRecordData[catKey === "additional_student_info" ? "student_info" : catKey]) &&
                   studentRecordData[catKey === "additional_student_info" ? "student_info" : catKey].map( (item, i) => {
-                    const isMultiple = studentRecordData[catKey].length > 1;
+                    const isMultiple = studentRecordData[catKey === "additional_student_info" ? "student_info" : catKey].length > 1;
                     return (
                       <Stack key={i} sx={{ border: `${ isMultiple ? "1px solid #ccc" : "none" }`, borderRadius: "4px", position:"relative", padding:`${ isMultiple ? "10px" : 0 }` }}>
-                        <CategoryManager displayData={item} formData={formCategories[catKey]} config={categories[catKey]} />
+                        <CategoryManager displayData={item} formData={formCategories[catKey]} config={categories[catKey]} tableKey={catKey} studentId={slug}/>
                       </Stack>
                     )
                   })
@@ -120,12 +118,5 @@ function StudentRecord() {
         }
       </Stack>
     </>
-  );
-}
-export default function StudentRecordPage() {
-  return (
-    <SessionProvider>
-      <StudentRecord />
-    </SessionProvider>
   );
 }
