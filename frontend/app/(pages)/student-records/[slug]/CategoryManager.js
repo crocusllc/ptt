@@ -3,18 +3,56 @@ import Box from "@mui/material/Box";
 import {useState} from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import FormBuilder from "@/app/(pages)/student-records/[slug]/FormBuilder";
+import {useAuth} from "@/app/utils/contexts/AuthProvider";
 
-export default function CategoryManager({displayData, formData, config}) {
+export default function CategoryManager({displayData, formData, config, tableKey, studentId}) {
+  const { userSession } = useAuth();
   const [editMode, setEditMode] = useState(false);
-  const handleSubmit = (data) => {
-    alert("Submitted data: " + JSON.stringify(data));
+  const [renderData, setRenderData] = useState(displayData)
+  const handleSubmit = async (data) => {
+    const source_to_table = {
+      "additional_student_info": "additional_student_data",
+      "student_info": "student",
+      "program_info": "additional_program_data",
+      "clinical_placements": "clinical"
+    }
+    //alert("Submitted data: " + JSON.stringify(data));
+    const postData = {
+      id: displayData.id,  // Optional, include for updates
+      student_id: studentId,
+      source: source_to_table[tableKey], // This determines which table is updated
+      ...data,
+    }
+    console.log(postData);
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/update_data`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${userSession.user.accessToken}`
+        },
+        body: JSON.stringify(postData)
+      });
+
+      if (!response.ok) {
+        console.error("HTTP Error:", response.status);
+      }
+
+      const res = await response.json();
+      setRenderData(data);
+      console.log(res)
+
+    } catch (error) {
+      console.error("Error fetching student record info:", error);
+    }
   };
 
   return (
     editMode
       ? <FormBuilder formFields={formData} onCancel={()=>setEditMode(false)} defaultData={displayData} onSubmit={handleSubmit}/>
       : (
-        Object.keys(displayData).map( (el, i) => {
+        Object.keys(renderData)?.map( (el, i) => {
           const fieldDef = formData.filter( field => field['CSV column name'] === el)[0];
           if(fieldDef) {
             return(
