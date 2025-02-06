@@ -8,7 +8,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 export default function FormBuilder({formFields, onCancel, defaultData, onSubmit, submitBtnTxt = 'save'}) {
   const [formData, setFormData] = useState(
-    Object.fromEntries(formFields.map(field => [field["CSV column name"], defaultData?.[field["Data element label"]] ?? '']))
+    Object.fromEntries(formFields.map(field => [field["CSV column name"], defaultData?.[field["CSV column name"]] ?? '']))
   );
 
   const handleSubmit = (e) => {
@@ -32,7 +32,7 @@ export default function FormBuilder({formFields, onCancel, defaultData, onSubmit
                 <Select
                   labelId={`${[field['CSV column name']]}-label`}
                   id={field['CSV column name']}
-                  value={(field["multi-select"] && formData[field['CSV column name']] === '') ? [] : formData[field['CSV column name']]}
+                  value={formData?.[field['CSV column name']] ?? (field["multi-select"] ? [] : '')}
                   label={field['Data element label']}
                   onChange={(e) => handleChange(field['CSV column name'], e.target.value)}
                   multiple={field["multi-select"]}
@@ -48,7 +48,7 @@ export default function FormBuilder({formFields, onCancel, defaultData, onSubmit
               <TextField key={i}
                          id={field['CSV column name']}
                          required={field["Required field"]}
-                         value={formData[field['CSV column name']] ?? undefined}
+                         value={formData?.[field['CSV column name']] ?? undefined}
                          label={field['Data element label']}
                          variant="filled"
                          onChange={(e) => handleChange(field['CSV column name'], e.target.value)}
@@ -59,7 +59,7 @@ export default function FormBuilder({formFields, onCancel, defaultData, onSubmit
               <LocalizationProvider dateAdapter={AdapterDayjs} key={i}>
                 <DatePicker
                   label={field['Data element label']}
-                  value={formData[field['CSV column name']] === '' ? null : dayjs(formData[field['CSV column name']])}
+                  value={formData?.[field['CSV column name']] === '' ? null : dayjs(formData?.[field['CSV column name']]) }
                   onChange={(date) => handleChange(field['CSV column name'], dayjs(date).format('YYYY-MM-DD'))}
                   format="YYYY-MM-DD"
                 />

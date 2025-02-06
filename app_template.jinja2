@@ -122,7 +122,7 @@ def create_app():
         data = request.get_data()
         json_str = data.decode('utf-8')
         json_objs = json_str.split('\n')
-        
+
         for obj in json_objs:
             if is_json(obj):
                 metadata = json.loads(obj)
@@ -191,7 +191,7 @@ def create_app():
         
         if query_fields == "":
              query_fields = "*"
- 
+
         fields_not_date = fields.copy()
 
         start_date = ''
@@ -205,7 +205,7 @@ def create_app():
 
                     if "start" in key and fields[key] != '':
                         start_date = f'AND {key} >= \'{fields[key]}\'::date '
-                    
+
                     if "end" in key and fields[key] != '':
                         end_date = f'AND {key} <= \'{fields[key]}\'::date '
 
@@ -216,7 +216,7 @@ def create_app():
                     fields_not_date.pop(key, None)
 
             conditions = ' AND '.join([f'lower({key}) like lower(\'%{fields_not_date[key]}%\')' for key in fields_not_date])
-        
+
             query_all = f'SELECT * FROM student_info s JOIN clinical_placements c ON s.id=c.student_id JOIN program_info p ON s.id=p.student_id WHERE {conditions} {start_date} {end_date} {exit_date};'
             query_all = query_all.replace("WHERE AND", "WHERE")
         else:
@@ -224,7 +224,7 @@ def create_app():
 
         conn = create_conn()
         cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
-        
+
         cur.execute(query_all)
         results = cur.fetchall()
 
@@ -256,8 +256,63 @@ def create_app():
 
         return jsonify({"message": "No data available"})
 
+    # ========== UPDATE RECORD ENDPOINT ==========
+    @app.route("/update_data", methods=["POST"])
+    @login_required(role_required=["administrator", "viewer"])
+    def update_record():
+        data = request.get_json() or {}
+
+        if (data != {}):
+            id = data.get("id")
+            student_id = data.get("student_id")
+            source = data.get("source")
+
+            # Map source to tables
+            source_to_table = {
+                "additional_student_data": "student_info",
+                "student": "student_info",
+                "additional_program_data": "program_info",
+                "clinical": "clinical_placements"
+            }
+
+            to_update = data.copy()
+            to_update.pop('id', None)
+            to_update.pop('student_id', None)
+            to_update.pop('source', None)
+
+            for key in to_update:
+                if to_update[key] is None:
+                    to_update.pop(key, None)
+
+            conn = create_conn()
+            cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+
+            if id is not None :
+                set_values = ', '.join(f'{key} = \'{to_update[key]}\'' for key in to_update)
+
+                query = f'UPDATE {source_to_table[source]} SET {set_values} WHERE id = {id}'
+
+                cur.execute(query)
+                conn.commit()
+
+                return jsonify({"message": f"The student_id {student_id} was update successfully."})
+            
+            if id is None:
+                columns = ', '.join([f'{key}' for key in to_update])
+                values = ', '.join([f'\'{to_update[key]}\'' for key in to_update])
+
+                query = f'INSERT INTO {source_to_table[source]}({columns}) VALUES (values);'
+
+                cur.execute(query)
+                conn.commit()
+
+                return jsonify({"message": f"The record was created successfully."})
+
+            cur.close()
+            conn.close()
+
     # ========== STUDENT RECORD ENDPOINT ==========
-    @app.route("/student_record_info", methods=["GET", "POST"])
+    @app.route("/student_record_info", methods=["GET", "POST", "PATCH"])
     @login_required(role_required=["administrator", "viewer"])
     def student_record():
         conn = create_conn()
@@ -268,12 +323,27 @@ def create_app():
         
             if (data != {}):
                 student_id = data.get("student_id")
-                
+
                 cur.execute("SELECT * from student_info where id=%s;", (student_id,))
                 result = cur.fetchone()
-            
+
                 if result is not None:
-                    return jsonify(result)
+                    result_student = result
+
+                    page_result = {}
+                    page_result['student_info'] = [result_student]
+
+                    cur.execute("SELECT * from program_info where student_id=%s;", (student_id,))
+                    result_program = cur.fetchall()
+
+                    page_result['program_info'] = result_program
+
+                    cur.execute("SELECT * from clinical_placements where student_id=%s;", (student_id,))
+                    result_clinical = cur.fetchall()
+
+                    page_result['clinical_placements'] = result_clinical
+
+                    return jsonify(page_result)
                 else:
                     return jsonify({"message": "The student_id doesn't exist"})
 

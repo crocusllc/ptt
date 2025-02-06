@@ -10,25 +10,26 @@ import getConfigData from "@/app/utils/getConfigs"
 import {IconButton} from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import FormBuilder from "@/app/(pages)/student-records/[slug]/FormBuilder";
-import {SessionProvider, useSession} from "next-auth/react";
+import {useAuth} from "@/app/utils/contexts/AuthProvider";
 
-function StudentRecord() {
-  const { data: session } = useSession();
+export default function StudentRecordPage() {
+  const { userSession } = useAuth();
   const params = useParams();
   const slug = params.slug;
 
   const [studentRecordData, setStudentRecordData] = useState();
   const [addFormEnabled, setAddFormEnabled] = useState(false);
+  const categories = getConfigData()?.categories;
 
   useEffect(()=> {
-    if(session && !studentRecordData) {
+    if(userSession && !studentRecordData) {
       async function fetchStudentRecordInfo() {
         try {
           const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/student_record_info`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${session.user.accessToken}`
+              "Authorization": `Bearer ${userSession.user.accessToken}`
             },
             body: JSON.stringify({student_id: slug})
           });
@@ -43,20 +44,20 @@ function StudentRecord() {
           console.error("Error fetching student record info:", error);
         }
       }
+
       fetchStudentRecordInfo().then(data => {
-        console.log(data)
-        setStudentRecordData(student_record_info);
+        setStudentRecordData(data);
       })
     }
-  }, [session])
+  }, [userSession])
 
   // Get the Student Record Config Data.
   const formData = getConfigData()?.fields.find( el => el?.form?.Name === "Student Records")?.form;
   const fieldKeys =  Object.keys(formData)
   let formCategories = {}
-  // Grouping fields by category
+  // Grouping fields by category.
   fieldKeys.forEach( el => {
-    if(formData[el]?.Category) {
+    if(formData[el]?.Category && formData[el]?.Category !== "Global") {
       if(formCategories[formData[el].Category]) {
         formCategories[formData[el].Category].push(formData[el])
       } else {
@@ -70,8 +71,6 @@ function StudentRecord() {
     }
   })
 
-  const categories = getConfigData()?.categories;
-
   const handleSubmit = (data) => {
     alert("Submitted data: " + JSON.stringify(data));
   };
@@ -82,14 +81,14 @@ function StudentRecord() {
       <Stack spacing={2} sx={{maxWidth: "768px"}}>
         {
           studentRecordData &&
-          Object.keys(studentRecordData).map( catName => {
+          Object.keys(categories).map( catKey => {
             return (
-              <Stack spacing={2} key={catName} sx={{padding: "16px", border: "1px solid #ccc", borderRadius: "4px",  position: "relative"}}>
+              <Stack spacing={2} key={catKey} sx={{padding: "16px", border: "1px solid #ccc", borderRadius: "4px",  position: "relative"}}>
                 <Box component={"h2"} sx={{marginBottom: "10px"}}>
-                  {catName}
+                  {categories[catKey].label}
                 </Box>
                 {
-                  (categories[catName]?.addable && !addFormEnabled) && (
+                  (categories[catKey]?.addable && !addFormEnabled) && (
                     <Stack direction="row" sx={{position: "absolute", right:"6px", top:"10px", marginTop: "0 !important"}}>
                       <IconButton aria-label="add" onClick={()=>setAddFormEnabled(true)}>
                         <AddCircleIcon />
@@ -98,19 +97,20 @@ function StudentRecord() {
                   )
                 }
                 {
-                  (categories[catName]?.addable && addFormEnabled) && (
-                    <FormBuilder formFields={formCategories[catName]} onCancel={()=>setAddFormEnabled(false)} onSubmit={handleSubmit}/>
+                  (categories[catKey]?.addable && addFormEnabled) && (
+                    <FormBuilder formFields={formCategories[catKey]} onCancel={()=>setAddFormEnabled(false)} onSubmit={handleSubmit}/>
                   )
                 }
                 {
-                  studentRecordData[catName].map( (item, i) => {
-                    const isMultiple = studentRecordData[catName].length > 1;
+                  studentRecordData[catKey === "additional_student_info" ? "student_info" : catKey].map( (item, i) => {
+                    const isMultiple = studentRecordData[catKey === "additional_student_info" ? "student_info" : catKey].length > 1;
                     return (
                       <Stack key={i} sx={{ border: `${ isMultiple ? "1px solid #ccc" : "none" }`, borderRadius: "4px", position:"relative", padding:`${ isMultiple ? "10px" : 0 }` }}>
-                        <CategoryManager displayData={item} formData={formCategories[catName]} config={categories[catName]} />
+                        <CategoryManager displayData={item} formData={formCategories[catKey]} config={categories[catKey]} tableKey={catKey} studentId={slug}/>
                       </Stack>
                     )
                   })
+
                 }
               </Stack>
             )
@@ -118,12 +118,5 @@ function StudentRecord() {
         }
       </Stack>
     </>
-  );
-}
-export default function StudentRecordPage() {
-  return (
-    <SessionProvider>
-      <StudentRecord />
-    </SessionProvider>
   );
 }
