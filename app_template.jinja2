@@ -288,9 +288,9 @@ def create_app():
             cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
             if id is not None :
-                set_values = ', '.join(f'SET {key} = \'{to_update[key]}\'' for key in to_update)
+                set_values = ', '.join(f'{key} = \'{to_update[key]}\'' for key in to_update)
 
-                query = f'UPDATE {source_to_table[source]} {set_values} WHERE id = {id}'
+                query = f'UPDATE {source_to_table[source]} SET {set_values} WHERE id = {id}'
 
                 cur.execute(query)
                 conn.commit()
