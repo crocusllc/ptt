@@ -328,7 +328,7 @@ def create_app():
                     result_student = result
 
                     page_result = {}
-                    page_result['student_info'] = result_student
+                    page_result['student_info'] = {result_student}
 
                     cur.execute("SELECT * from program_info where student_id=%s;", (student_id,))
                     result_program = cur.fetchall()
