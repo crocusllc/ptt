@@ -63,7 +63,7 @@ fields:
         CSV column name: "program_completion_status"
         Type: select
         Validation required: false
-        Dropdown or validation values: "In progress,Complete,Withdrawn"
+        Dropdown or validation values: "In progress,Complete,Withdrawn,pIn progress"
         multi-select: false
         Required field: false
         Include in bulk upload?: true
