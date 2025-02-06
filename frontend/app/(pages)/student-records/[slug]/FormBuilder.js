@@ -7,9 +7,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 export default function FormBuilder({formFields, onCancel, defaultData, onSubmit, submitBtnTxt = 'save'}) {
-  const [formData, setFormData] = useState(
-    Object.fromEntries(formFields.map(field => [field["CSV column name"], defaultData?.[field["Data element label"]] ?? '']))
-  );
+  const [formData, setFormData] = useState(defaultData);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -32,7 +30,7 @@ export default function FormBuilder({formFields, onCancel, defaultData, onSubmit
                 <Select
                   labelId={`${[field['CSV column name']]}-label`}
                   id={field['CSV column name']}
-                  value={(field["multi-select"] && formData[field['CSV column name']] === '') ? [] : formData[field['CSV column name']]}
+                  value={formData[field['CSV column name']] ?? (field["multi-select"] ? [] : '')}
                   label={field['Data element label']}
                   onChange={(e) => handleChange(field['CSV column name'], e.target.value)}
                   multiple={field["multi-select"]}
