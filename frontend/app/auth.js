@@ -54,7 +54,7 @@ export const { handlers, auth } = NextAuth({
     },
   },
   pages: {
-    signIn: `${process.env.API_URL}/login`, // Redirect to custom login page
-    signOut: `${process.env.API_URL}/login`
+    signIn: `${process.env.AUTH_TRUST_HOST}/login`, // Redirect to custom login page
+    signOut: `${process.env.AUTH_TRUST_HOST}/login`
   },
 })
