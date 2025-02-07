@@ -115,6 +115,62 @@ def create_app():
 
         return jsonify({"token": token, "username": user['username'], "role": user['user_role']})
 
+    # ========== CREATE USER ENDPOINT ==========
+    @app.route("/create_user", methods=["POST"])
+    def login():
+        data = request.get_json() or {}
+        username = data.get("username")
+        password = data.get("password")
+        useremail = data.get("user_email")
+        userrole = data.get("user_role")
+
+        if not username or not password or not useremail or not userrole:
+            return jsonify({"error": "Missing fields"}), 400
+
+        date_now = datetime.date.today()
+        years_to_add = date_now.year + 5
+
+        expiration_date = date_now.replace(year=years_to_add).strftime('%Y-%m-%d')
+
+        bytes = password.encode('utf-8') 
+        hash = bcrypt.hashpw(bytes, app.config["SECRET_KEY"]) 
+        
+        conn = create_conn()
+        cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+
+        query = f"INSERT INTO users (username, password_hash, user_email, password_expiration_date, user_role) VALUES ({username},{hash},{useremail},{expiration_date},{userrole});"
+        cur.execute(query)
+        
+        conn.commit()
+
+        cur.close()
+        conn.close()
+
+        return jsonify({"message": "The user was created successfully!"})
+
+    # ========== CHANGE PASSWORD ENDPOINT ==========
+    @app.route("/change_password", methods=["POST"])
+    @login_required(role_required=["administrator", "editor","viewer"])
+    def change_password():
+        data = request.get_json() or {}
+        auth_header = request.headers.get('Authorization', None)
+       
+        token = auth_header.split(" ")[1]
+        decoded = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
+        user = decoded.get("sub")
+
+        conn = create_conn()
+        cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+
+        query = f"UPDATE users SET password_hash = {hash} where username = {user};"
+        cur.execute(query)
+        conn.commit()
+
+        cur.close()
+        conn.close()
+
+        return jsonify({"message": "The username {user} set the password successfully!"})
+
     # ========== FILE UPLOAD ENDPOINT ==========
     @app.route("/file_upload", methods=["POST"])
     @login_required(role_required=["administrator", "editor"])
