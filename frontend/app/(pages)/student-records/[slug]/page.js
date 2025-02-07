@@ -19,10 +19,12 @@ export default function StudentRecordPage() {
 
   const [studentRecordData, setStudentRecordData] = useState();
   const [addFormEnabled, setAddFormEnabled] = useState(false);
+  const [loadData, setLoadData] = useState(true);
   const categories = getConfigData()?.categories;
 
   useEffect(()=> {
-    if(userSession && !studentRecordData) {
+    if(userSession && loadData) {
+      setLoadData(false);
       async function fetchStudentRecordInfo() {
         try {
           const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/student_record_info`, {
@@ -49,7 +51,7 @@ export default function StudentRecordPage() {
         setStudentRecordData(data);
       })
     }
-  }, [userSession])
+  }, [userSession, loadData])
 
   // Get the Student Record Config Data.
   const formData = getConfigData()?.fields.find( el => el?.form?.Name === "Student Records")?.form;
@@ -88,17 +90,8 @@ export default function StudentRecordPage() {
                   {categories[catKey].label}
                 </Box>
                 {
-                  (categories[catKey]?.addable && !addFormEnabled) && (
-                    <Stack direction="row" sx={{position: "absolute", right:"6px", top:"10px", marginTop: "0 !important"}}>
-                      <IconButton aria-label="add" onClick={()=>setAddFormEnabled(true)}>
-                        <AddCircleIcon />
-                      </IconButton>
-                    </Stack>
-                  )
-                }
-                {
-                  (categories[catKey]?.addable && addFormEnabled) && (
-                    <FormBuilder formFields={formCategories[catKey]} onCancel={()=>setAddFormEnabled(false)} onSubmit={handleSubmit}/>
+                  (categories[catKey]?.addable) && (
+                    <CategoryManager formData={formCategories[catKey]} config={categories[catKey]} tableKey={catKey} studentId={slug} addable={true}/>
                   )
                 }
                 {
@@ -106,7 +99,7 @@ export default function StudentRecordPage() {
                     const isMultiple = studentRecordData[catKey === "additional_student_info" ? "student_info" : catKey].length > 1;
                     return (
                       <Stack key={i} sx={{ border: `${ isMultiple ? "1px solid #ccc" : "none" }`, borderRadius: "4px", position:"relative", padding:`${ isMultiple ? "10px" : 0 }` }}>
-                        <CategoryManager displayData={item} formData={formCategories[catKey]} config={categories[catKey]} tableKey={catKey} studentId={slug}/>
+                        <CategoryManager displayData={item} formData={formCategories[catKey]} config={categories[catKey]} tableKey={catKey} studentId={slug} onFetch={()=>setLoadData(true)}/>
                       </Stack>
                     )
                   })
