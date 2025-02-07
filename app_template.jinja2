@@ -178,7 +178,7 @@ def create_app():
 
     # ========== FILE DOWNLOAD ENDPOINT ==========
     @app.route("/file_download", methods=["POST"])
-    @login_required(role_required=["administrator", "viewer"])
+    @login_required(role_required=["administrator", "editor"])
     def file_download():
         data = request.get_json() or {}
         file_name = data.get("file_name")
@@ -258,7 +258,7 @@ def create_app():
 
     # ========== UPDATE RECORD ENDPOINT ==========
     @app.route("/update_data", methods=["POST"])
-    @login_required(role_required=["administrator", "viewer"])
+    @login_required(role_required=["administrator", "editor"])
     def update_record():
         data = request.get_json() or {}
 
@@ -313,7 +313,7 @@ def create_app():
 
     # ========== STUDENT RECORD ENDPOINT ==========
     @app.route("/student_record_info", methods=["GET", "POST", "PATCH"])
-    @login_required(role_required=["administrator", "viewer"])
+    @login_required(role_required=["administrator", "editor", "viewer"])
     def student_record():
         conn = create_conn()
         cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
