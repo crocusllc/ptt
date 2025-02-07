@@ -31,8 +31,9 @@ INSERT INTO users (
     username,
     password_hash,
     user_email,
-    password_expiration_date ,
-    user_role 
+    password_expiration_date,
+    user_role,
+    new_password
 ) VALUES (
    2,
    'editor',
@@ -40,6 +41,7 @@ INSERT INTO users (
     'editor@example.com',
     '2099-12-31',
     'editor'
+    true
 );
 
 INSERT INTO users (
@@ -55,7 +57,8 @@ INSERT INTO users (
     '$2a$10$HJn5BCRhYWBDi6NCqznwdOtm24BllSJNPPkks378JtX800WkWV142',
     'viewer@example.com',
     '2099-12-31',
-    'viewer'
+    'viewer',
+    true
 );
 
 --ALTER TABLE students ENABLE ROW LEVEL SECURITY;
