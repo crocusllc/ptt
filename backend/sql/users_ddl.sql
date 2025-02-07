@@ -50,7 +50,7 @@ INSERT INTO users (
    3,
    'viewer',
     '$2a$10$HJn5BCRhYWBDi6NCqznwdOtm24BllSJNPPkks378JtX800WkWV142',
-    'admin@example.com',
+    'viewer@example.com',
     '2099-12-31',
     'viewer'
 );
