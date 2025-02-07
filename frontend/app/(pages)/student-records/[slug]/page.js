@@ -91,7 +91,7 @@ export default function StudentRecordPage() {
                 </Box>
                 {
                   (categories[catKey]?.addable) && (
-                    <CategoryManager formData={formCategories[catKey]} config={categories[catKey]} tableKey={catKey} studentId={slug} addable={true}/>
+                    <CategoryManager formData={formCategories[catKey]} config={categories[catKey]} tableKey={catKey} studentId={slug} addable={categories[catKey]?.addable}/>
                   )
                 }
                 {

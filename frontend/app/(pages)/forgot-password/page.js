@@ -33,7 +33,7 @@ export default function ForgotPass() {
       return;
     }
     const data = new FormData(e.currentTarget);
-    console.log(data);
+    //console.log(data);
   };
 
   return (

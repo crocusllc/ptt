@@ -34,27 +34,25 @@ export default function RootLayout({ children }) {
         <SessionProvider>
           <AuthProvider>
             <body className={`${geistSans.variable} ${geistMono.variable}`}>
-            <Box sx={{
-              display: "grid",
-              gap: "20px",
-              gridTemplateColumns: "80px 1fr"
-            }}>
-              <Box component={"header"} sx={{gridColumn: "1 / 3"}}>
-                <Header userData={userData}/>
-              </Box>
-              {
-                !noSidebarPages && (
-                  <Box component={"aside"} sx={{gridColumn: "1 / 2"}}>
-                    <MainMenu/>
-                  </Box>
-                )
-              }
-              <Box component={"main"} sx={{gridColumn: noSidebarPages ? "1 / 3" : "2 / 3", paddingBottom: "20px", paddingRight: "20px"}}>
-                <Container maxWidth="xl">
-                  {children}
+              <Box sx={{
+                display: "grid",
+                gap: "20px",
+                gridTemplateColumns: "80px 1fr"
+              }}>
+                <Box component={"header"} sx={{gridColumn: "1 / 3"}}>
+                  <Header userData={userData}/>
+                </Box>
+                {
+                  !noSidebarPages && (
+                    <Box component={"aside"} sx={{gridColumn: "1 / 2"}}>
+                      <MainMenu/>
+                    </Box>
+                  )
+                }
+                <Container  maxWidth="xl" component={"main"} sx={{gridColumn: noSidebarPages ? "1 / 3" : "2 / 3", paddingBottom: "20px", paddingRight: "20px", minHeight: "calc(100vh - 140px)"}}>
+                    {children}
                 </Container>
               </Box>
-            </Box>
             </body>
           </AuthProvider>
         </SessionProvider>

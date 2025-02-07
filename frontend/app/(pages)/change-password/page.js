@@ -47,7 +47,7 @@ export default function ChangePass() {
       return;
     }
     const data = new FormData(e.currentTarget);
-    console.log(data);
+
   };
 
   return (

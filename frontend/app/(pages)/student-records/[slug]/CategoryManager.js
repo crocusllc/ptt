@@ -7,7 +7,7 @@ import {useAuth} from "@/app/utils/contexts/AuthProvider";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 export default function CategoryManager({displayData, formData, config, tableKey, studentId, onFetch, addable}) {
-  console.log(addable)
+
   const { userSession } = useAuth();
   const [editMode, setEditMode] = useState(false);
   const [addMode, setAddMonde] = useState(false)
@@ -61,7 +61,7 @@ export default function CategoryManager({displayData, formData, config, tableKey
       : (
         <>
           {
-            addable && (
+            (addable && userSession && userSession.user.role !== 'viewer') && (
               <Stack direction="row" sx={{position: "absolute", right:"6px", top:"10px", marginTop: "0 !important"}}>
                 <IconButton aria-label="add" onClick={()=>setAddMonde(true)}>
                   <AddCircleIcon />
@@ -79,7 +79,7 @@ export default function CategoryManager({displayData, formData, config, tableKey
 
                       <Stack direction="row" spacing={1} sx={{position: "absolute", right:"6px", top:"4px"}}>
                         {
-                          config?.editable && (
+                          (config?.editable && userSession && userSession.user.role !== 'viewer') && (
                             <IconButton aria-label="edit" onClick={()=> setEditMode(true)}>
                               <EditIcon />
                             </IconButton>
