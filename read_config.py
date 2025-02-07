@@ -114,10 +114,10 @@ def create_sql_files(fields):
 
     # Map categories to tables
     category_to_table = {
-        "Additional Student Information": "student_info",
-        "Student IHE Enrollment Information": "student_info",
-        "Additional Program Information": "program_info",
-        "Culminating Clinical Placement": "clinical_placements"
+        "additional_student_info": "student_info",
+        "student_info": "student_info",
+        "program_info": "program_info",
+        "clinical_placements": "clinical_placements"
     }
 
     # Define basic type mapping from YAML types to SQL types

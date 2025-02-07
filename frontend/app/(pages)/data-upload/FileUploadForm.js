@@ -30,7 +30,7 @@ const FileUpload = ({FormConfig}) => {
         const rows = content.split("\n");
         const csvHeaders = rows[0].split(",");
 
-        console.log("CSV Headers:", csvHeaders);
+        //console.log("CSV Headers:", csvHeaders);
 
         const jsonData = {
           file_name: file.name,
@@ -72,7 +72,7 @@ const FileUpload = ({FormConfig}) => {
       setUploadResponse(result);
       setOpen(true);
 
-      console.log("Upload successful:", result);
+      //console.log("Upload successful:", result);
 
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -112,6 +112,15 @@ const FileUpload = ({FormConfig}) => {
         onClose={()=> setOpen(false)}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
+        sx={{
+          "& .MuiDialog-container": {
+            "& .MuiPaper-root": {
+              width: "100%",
+              maxWidth: "460px",
+              minHeight: "200px"
+            },
+          },
+        }}
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
           Upload response:

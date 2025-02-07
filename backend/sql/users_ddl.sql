@@ -22,6 +22,39 @@ INSERT INTO users (
     '2099-12-31',
     'administrator'
 );
+
+INSERT INTO users (
+   user_id,
+    username,
+    password_hash,
+    user_email,
+    password_expiration_date ,
+    user_role 
+) VALUES (
+   2,
+   'editor',
+    '$2a$10$HJn5BCRhYWBDi6NCqznwdOtm24BllSJNPPkks378JtX800WkWV142',
+    'editor@example.com',
+    '2099-12-31',
+    'editor'
+);
+
+INSERT INTO users (
+   user_id,
+    username,
+    password_hash,
+    user_email,
+    password_expiration_date ,
+    user_role 
+) VALUES (
+   3,
+   'viewer',
+    '$2a$10$HJn5BCRhYWBDi6NCqznwdOtm24BllSJNPPkks378JtX800WkWV142',
+    'viewer@example.com',
+    '2099-12-31',
+    'viewer'
+);
+
 --ALTER TABLE students ENABLE ROW LEVEL SECURITY;
 --ALTER TABLE clinical_placements ENABLE ROW LEVEL SECURITY;
 
