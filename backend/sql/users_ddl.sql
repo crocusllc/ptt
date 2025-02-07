@@ -5,7 +5,7 @@ CREATE TABLE users (
     user_email VARCHAR(100) UNIQUE NOT NULL,
     password_expiration_date DATE NOT NULL,
     user_role VARCHAR(20) CHECK (user_role IN ('administrator', 'editor', 'viewer')) NOT NULL,
-    new_password BOOLEAN NULL DEFAULT TRUE;
+    new_password BOOLEAN NULL DEFAULT TRUE
 );
 
 INSERT INTO users (
@@ -40,7 +40,7 @@ INSERT INTO users (
     '$2a$10$HJn5BCRhYWBDi6NCqznwdOtm24BllSJNPPkks378JtX800WkWV142',
     'editor@example.com',
     '2099-12-31',
-    'editor'
+    'editor',
     true
 );
 
