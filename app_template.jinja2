@@ -132,8 +132,7 @@ def create_app():
 
         expiration_date = date_now.replace(year=years_to_add).strftime('%Y-%m-%d')
 
-        bytes = password.encode('utf-8') 
-        hash = bcrypt.hashpw(bytes, app.config["SECRET_KEY"]) 
+        hash = bcrypt.using(salt=app.config["SECRET_KEY"]).hash(password)
         
         conn = create_conn()
         cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
@@ -160,8 +159,7 @@ def create_app():
         decoded = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
         user = decoded.get("sub")
 
-        bytes = password.encode('utf-8') 
-        hash = bcrypt.hashpw(bytes, app.config["SECRET_KEY"]) 
+        hash = bcrypt.using(salt=app.config["SECRET_KEY"]).hash(password)
 
         conn = create_conn()
         cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
