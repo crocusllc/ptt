@@ -39,6 +39,7 @@ export const { handlers, auth } = NextAuth({
         token.username = user.username;
         token.role = user.role;
         token.accessToken = user.token;
+        token.new_password = user.new_password;
       }
       return token;
     },
@@ -49,6 +50,7 @@ export const { handlers, auth } = NextAuth({
         username: token.username,
         role: token.role,
         accessToken: token.accessToken,
+        require_pass: token.new_password,
       };
       return session;
     },

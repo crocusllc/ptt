@@ -24,9 +24,7 @@ const geistMono = Geist_Mono({
 
 export default function RootLayout({ children }) {
   const pathname = usePathname()
-  const [userData, setUserData] = useState();
-
-  const noSidebarPages = ['/login', 'forgot-password', 'change-password'].includes(pathname)
+  const noSidebarPages = ['/login', '/forgot-password'].includes(pathname)
 
   return (
     <html lang="en">
@@ -40,7 +38,7 @@ export default function RootLayout({ children }) {
                 gridTemplateColumns: "80px 1fr"
               }}>
                 <Box component={"header"} sx={{gridColumn: "1 / 3"}}>
-                  <Header userData={userData}/>
+                  <Header/>
                 </Box>
                 {
                   !noSidebarPages && (
