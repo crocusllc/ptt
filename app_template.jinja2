@@ -153,16 +153,20 @@ def create_app():
     @login_required(role_required=["administrator", "editor","viewer"])
     def change_password():
         data = request.get_json() or {}
+        password = data.get("password")
         auth_header = request.headers.get('Authorization', None)
        
         token = auth_header.split(" ")[1]
         decoded = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
         user = decoded.get("sub")
 
+        bytes = password.encode('utf-8') 
+        hash = bcrypt.hashpw(bytes, app.config["SECRET_KEY"]) 
+
         conn = create_conn()
         cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
-        query = f"UPDATE users SET password_hash = {hash} where username = {user};"
+        query = f"UPDATE users SET password_hash = {hash}, new_password = FALSE WHERE username = {user};"
         cur.execute(query)
         conn.commit()
 
