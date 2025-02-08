@@ -13,10 +13,11 @@ export default function Header() {
       <Box className={"header__brand-logo"}  sx={{display: "flex"}}>
         <Link href="/" aria-label="Home">
           <Image
-            src={ appLogo ?? "/ptt_logo.png" }
+            src={appLogo}
             width={174}
             height={46}
             alt="PTT Logo"
+            priority={true}
           />
         </Link>
         <Box className={"header__brand-name"} sx={{display:"flex", alignItems: "center", marginLeft: "20px"}}>
