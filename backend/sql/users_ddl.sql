@@ -49,8 +49,9 @@ INSERT INTO users (
     username,
     password_hash,
     user_email,
-    password_expiration_date ,
-    user_role 
+    password_expiration_date,
+    user_role,
+    new_password
 ) VALUES (
    3,
    'viewer',
