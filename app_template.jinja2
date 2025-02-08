@@ -117,7 +117,7 @@ def create_app():
 
     # ========== CREATE USER ENDPOINT ==========
     @app.route("/create_user", methods=["POST"])
-    def login():
+    def create_user():
         data = request.get_json() or {}
         username = data.get("username")
         password = data.get("password")
