@@ -138,7 +138,7 @@ def create_app():
         conn = create_conn()
         cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
-        query = f"INSERT INTO users (username, password_hash, user_email, password_expiration_date, user_role) VALUES ({username},{hash},{useremail},{expiration_date},{userrole});"
+        query = f"INSERT INTO users (username, password_hash, user_email, password_expiration_date, user_role) VALUES ('{username}','{hash}','{useremail}','{expiration_date}','{userrole}');"
         cur.execute(query)
         
         conn.commit()
@@ -166,7 +166,7 @@ def create_app():
         conn = create_conn()
         cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
-        query = f"UPDATE users SET password_hash = {hash}, new_password = FALSE WHERE username = {user};"
+        query = f"UPDATE users SET password_hash = '{hash}', new_password = FALSE WHERE username = '{user}';"
         cur.execute(query)
         conn.commit()
 
