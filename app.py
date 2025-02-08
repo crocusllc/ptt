@@ -21,11 +21,11 @@ def is_json(str):
 def create_conn():
     # Set up DB engine
     conn = psycopg2.connect(
-        dbname="{{PG_DB}}",
-        user="{{PG_USER}}",
-        password="{{PG_PWD}}",
-        host="{{PG_HOST}}",
-        port="{{PG_PORT}}"
+        dbname="ptt_db",
+        user="postgres",
+        password="postgres",
+        host="localhost",
+        port="5432"
     )
 
     return conn
@@ -35,7 +35,7 @@ def create_app():
     CORS(app, origins=["*"])
 
     # Set up DB engine
-    app.config["SECRET_KEY"] = "{{SECRET_KEY}}"
+    app.config["SECRET_KEY"] = "SUPER_SECRET"
 
     @app.route('/')
     def hello():
