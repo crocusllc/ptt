@@ -1,6 +1,6 @@
 --- #app theming
 theme:
-  logo: /ptt_logo.png
+  logo: "/ptt_logo.png"
   colors:
     primary: FFF
     secondary: 000

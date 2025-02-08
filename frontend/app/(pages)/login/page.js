@@ -8,10 +8,8 @@ import Button from '@mui/material/Button';
 import {useRef, useState} from "react";
 import Link from "next/link";
 import {signIn} from "next-auth/react";
-import {useAuth} from "@/app/utils/contexts/AuthProvider";
 
 export default function LoginPage() {
-  const { setUserSession } = useAuth();
   const [passwordError, setPasswordError] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
   const [usernameError, setUsernameError] = useState(false);
@@ -60,7 +58,6 @@ export default function LoginPage() {
       setLoginError('Username or password incorrect')
     } else  {
       // redirect and router.push do not work in prod mode.
-      setUserSession(response)
       window.location.href = "/";
     }
   };
