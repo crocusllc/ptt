@@ -173,7 +173,7 @@ def create_app():
         cur.close()
         conn.close()
 
-        return jsonify({"message": "The username {user} set the password successfully!"})
+        return jsonify({"message": f"The username {user} set the password successfully!"})
 
     # ========== FILE UPLOAD ENDPOINT ==========
     @app.route("/file_upload", methods=["POST"])
