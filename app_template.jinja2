@@ -361,7 +361,7 @@ def create_app():
                 columns = ', '.join([f'{key}' for key in to_update])
                 values = ', '.join([f'\'{to_update[key]}\'' for key in to_update])
 
-                query = f'INSERT INTO {source_to_table[source]}({columns}) VALUES (values);'
+                query = f'INSERT INTO {source_to_table[source]}({columns}) VALUES ({values});'
 
                 cur.execute(query)
                 conn.commit()
