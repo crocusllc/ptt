@@ -751,7 +751,7 @@ fields:
         Category: 'student_info'
         Order within category: 23
         Data element label: 'American Indian Or Alaska Native'
-        CSV column name: american_indian_or_alaskan_native
+        CSV column name: american_indian_or_alaska_native
         Type: text
         Validation required: false
         Dropdown or validation values: "N/A"
