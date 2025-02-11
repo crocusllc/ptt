@@ -7,6 +7,7 @@ import {useEffect, useState} from "react";
 import {useAuth} from "@/app/utils/contexts/AuthProvider";
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
+import {Button} from "@mui/material";
 
 const getFullRecordLink = (params) => {
   return <a href={`/student-records/${params.row.student_id}`} title="View student full record">View Full Record</a>;
@@ -90,6 +91,31 @@ export default function StudentRecordsPage() {
     }
   ];
 
+  const deleteStudentRecord = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/delete_student`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${userSession.user.accessToken}`
+        },
+        body: JSON.stringify({student_id: selectedRows}),
+      });
+
+      if (!response.ok) {
+        console.error("HTTP Error:", response.status);
+      } else {
+        const filteredStudents = studentRecords?.filter(student => !selectedRows.includes(student.student_id));
+        setStudentRecords(filteredStudents);
+      }
+
+      return await response.json();
+
+    } catch (error) {
+      console.error("Error fetching student record info:", error.message);
+    }
+  }
+
   const numberRows = 15;
 
   return (
@@ -99,7 +125,14 @@ export default function StudentRecordsPage() {
         studentRecords && (
           <>
             <Box sx={{textAlign: "right"}}>
-              <IconButton aria-label="delete" size="large">
+              <IconButton
+                aria-label="delete records"
+                title={"Delete records"}
+                size="large"
+                color="primary"
+                disabled={!selectedRows.length > 0}
+                onClick={deleteStudentRecord}
+              >
                 <DeleteIcon />
               </IconButton>
             </Box>
@@ -121,6 +154,8 @@ export default function StudentRecordsPage() {
                 onRowSelectionModelChange={handleRowSelection}
               />
             </Box>
+            <Button onClick={()=> console.log(selectedRows)}>Log Rows</Button>
+            <Button onClick={()=> console.log(studentRecords)}>Data</Button>
           </>
         )
       }
