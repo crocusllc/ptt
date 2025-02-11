@@ -336,7 +336,7 @@ def create_app():
                     cur.close()
                     conn.close()
                     
-                    return jsonify({"message": f"The student_id {student_id} data was delete successfully."})
+                return jsonify({"message": f"The student_ids {list(student_ids)} data was delete successfully."})
             else:
                 return jsonify({"message": f"Missing student_id."})
         
