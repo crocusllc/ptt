@@ -332,6 +332,7 @@ def create_app():
                     
                     query = f"DELETE FROM student_info WHERE student_id={student_id};"
                     cur.execute(query)
+                    conn.commit()
 
                     cur.close()
                     conn.close()
