@@ -18,7 +18,6 @@ export default function StudentRecordPage() {
   const slug = params.slug;
 
   const [studentRecordData, setStudentRecordData] = useState();
-  const [addFormEnabled, setAddFormEnabled] = useState(false);
   const [loadData, setLoadData] = useState(true);
   const categories = getConfigData()?.categories;
 
@@ -54,19 +53,24 @@ export default function StudentRecordPage() {
   }, [userSession, loadData])
 
   // Get the Student Record Config Data.
-  const formData = getConfigData()?.fields.find( el => el?.form?.Name === "Student Records")?.form;
-  const fieldKeys =  Object.keys(formData)
+  const configFormData = getConfigData()?.fields.find( el => el?.form?.Name === "Student Records")?.form;
+  const filteredFormData = Object.fromEntries(
+    Object.entries(configFormData).filter(
+      ([, value]) => value["Display on Student Record page?"] !== false
+    )
+  );
+  const fieldKeys =  Object.keys(filteredFormData)
   let formCategories = {}
   // Grouping fields by category.
   fieldKeys.forEach( el => {
-    if(formData[el]?.Category && formData[el]?.Category !== "Global") {
-      if(formCategories[formData[el].Category]) {
-        formCategories[formData[el].Category].push(formData[el])
+    if(filteredFormData[el]?.Category && filteredFormData[el]?.Category !== "Global") {
+      if(formCategories[filteredFormData[el].Category]) {
+        formCategories[filteredFormData[el].Category].push(filteredFormData[el])
       } else {
         formCategories = {
           ...formCategories,
-          [formData[el].Category]: [
-            formData[el]
+          [filteredFormData[el].Category]: [
+            filteredFormData[el]
           ]
         }
       }
@@ -83,31 +87,31 @@ export default function StudentRecordPage() {
       <Stack spacing={2} sx={{maxWidth: "768px"}}>
         {
           studentRecordData &&
-          Object.keys(categories).map( catKey => {
-            return (
-              <Stack spacing={2} key={catKey} sx={{padding: "16px", border: "1px solid #ccc", borderRadius: "4px",  position: "relative"}}>
-                <Box component={"h2"} sx={{marginBottom: "10px"}}>
-                  {categories[catKey].label}
-                </Box>
-                {
-                  (categories[catKey]?.addable) && (
-                    <CategoryManager formData={formCategories[catKey]} config={categories[catKey]} tableKey={catKey} studentId={slug} addable={categories[catKey]?.addable}/>
-                  )
-                }
-                {
-                  studentRecordData[catKey === "additional_student_info" ? "student_info" : catKey].map( (item, i) => {
-                    const isMultiple = studentRecordData[catKey === "additional_student_info" ? "student_info" : catKey].length > 1;
-                    return (
-                      <Stack key={i} sx={{ border: `${ isMultiple ? "1px solid #ccc" : "none" }`, borderRadius: "4px", position:"relative", padding:`${ isMultiple ? "10px" : 0 }` }}>
-                        <CategoryManager displayData={item} formData={formCategories[catKey]} config={categories[catKey]} tableKey={catKey} studentId={slug} onFetch={()=>setLoadData(true)}/>
-                      </Stack>
+            Object.keys(categories).map( catKey => {
+              return (
+                <Stack spacing={2} key={catKey} sx={{padding: "16px", border: "1px solid #ccc", borderRadius: "4px",  position: "relative"}}>
+                  <Box component={"h2"} sx={{marginBottom: "10px"}}>
+                    {categories[catKey].label}
+                  </Box>
+                  {
+                    (categories[catKey]?.addable) && (
+                      <CategoryManager formData={formCategories[catKey]} config={categories[catKey]} tableKey={catKey} studentId={slug} addable={categories[catKey]?.addable}/>
                     )
-                  })
+                  }
+                  {
+                    studentRecordData[catKey === "additional_student_info" ? "student_info" : catKey].map( (item, i) => {
+                      const isMultiple = studentRecordData[catKey === "additional_student_info" ? "student_info" : catKey].length > 1;
+                      return (
+                        <Stack key={i} sx={{ border: `${ isMultiple ? "1px solid #ccc" : "none" }`, borderRadius: "4px", position:"relative", padding:`${ isMultiple ? "10px" : 0 }` }}>
+                          <CategoryManager displayData={item} formData={formCategories[catKey]} config={categories[catKey]} tableKey={catKey} studentId={slug} onFetch={()=>setLoadData(true)}/>
+                        </Stack>
+                      )
+                    })
 
-                }
-              </Stack>
-            )
-          })
+                  }
+                </Stack>
+              )
+            })
         }
       </Stack>
     </>

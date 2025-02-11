@@ -5,14 +5,23 @@ import { DataGrid } from '@mui/x-data-grid';
 import getConfigData from "@/app/utils/getConfigs"
 import {useEffect, useState} from "react";
 import {useAuth} from "@/app/utils/contexts/AuthProvider";
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const getFullRecordLink = (params) => {
-  return <a href={`/student-records/${params.row.id}`}>View Full Record</a>;
+  return <a href={`/student-records/${params.row.id}`} title="View student full record">View Full Record</a>;
 };
 export default function StudentRecordsPage() {
   // Getting user session data.
   const [studentRecords, setStudentRecords] = useState();
+  const [selectedRows, setSelectedRows] = useState([]);
+
+  const handleRowSelection = (rowSelectionModel) => {
+    setSelectedRows(rowSelectionModel); // rowSelectionModel contains IDs of selected rows
+  };
+
   let gridFields = [];
+  let orderedGridColumn = []
   const { userSession } = useAuth();
 
   useEffect( ()=> {
@@ -48,11 +57,22 @@ export default function StudentRecordsPage() {
   const studentRecordKeys = Object.keys(studentRecordFormFields);
   // Using the key to filter field displayed in the student record page.
   studentRecordKeys.forEach( el => {
-    if(studentRecordFormFields[el]['Display on Student Record page?'] === true){
+    if(studentRecordFormFields[el]['Use as filter in View/Edit search page?'] === true){
       gridFields.push(studentRecordFormFields[el])
     }
   });
 
+  // Categories defined in config.yaml file.
+  const categories = getConfigData()?.categories;
+  // Grouped and sorted by categories
+  Object.keys(categories)?.forEach( cat => {
+    const sortedData = gridFields.filter(item => item.Category === cat)
+      .sort((a, b) => a["Order within category"] - b["Order within category"]);
+    orderedGridColumn = [
+      ...orderedGridColumn,
+      ...sortedData,
+    ]
+  })
 
   const gridColumns = [
     {
@@ -60,15 +80,17 @@ export default function StudentRecordsPage() {
       headerName: 'Student ID',
       width: 90,
     },
-    ...gridFields.map( field => ({
+    ...orderedGridColumn.map( field => ({
       field: field['CSV column name'],
       headerName: field['Data element label'],
       width: 150,
     })),
     {
       field: 'editUrl',
-      headerName: 'View/Edit',
-      width: 200,
+      headerName: '',
+      width: 150,
+      disableColumnMenu: true,
+      sortable: false,
       renderCell: getFullRecordLink,
     }
   ];
@@ -80,22 +102,30 @@ export default function StudentRecordsPage() {
       <h1>Student Records</h1>
       {
         studentRecords && (
-          <Box sx={{ height: (numberRows * 58), width: '100%' }}>
-            <DataGrid
-              rows={studentRecords}
-              columns={gridColumns}
-              initialState={{
-                pagination: {
-                  paginationModel: {
-                    pageSize: numberRows,
+          <>
+            <Box sx={{textAlign: "right"}}>
+              <IconButton aria-label="delete" size="large">
+                <DeleteIcon />
+              </IconButton>
+            </Box>
+            <Box sx={{ height: (numberRows * 58), width: '100%' }}>
+              <DataGrid
+                rows={studentRecords}
+                columns={gridColumns}
+                initialState={{
+                  pagination: {
+                    paginationModel: {
+                      pageSize: numberRows,
+                    },
                   },
-                },
-              }}
-              pageSizeOptions={[5]}
-              checkboxSelection
-              disableRowSelectionOnClick
-            />
-          </Box>
+                }}
+                pageSizeOptions={[5]}
+                checkboxSelection
+                disableRowSelectionOnClick
+                onRowSelectionModelChange={handleRowSelection}
+              />
+            </Box>
+          </>
         )
       }
     </>
