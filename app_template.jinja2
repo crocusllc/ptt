@@ -316,6 +316,28 @@ def create_app():
 
         return jsonify({"message": "No data available"})
 
+    # ========== DELETE STUDENT ENDPOINT ==========
+    @app.route("/delete_student", methods=["POST"])
+    @login_required(role_required=["administrator", "editor"])
+    def delete_record():
+        data = request.get_json() or {}
+
+        if (data != {}):
+            if 'student_id' in data:
+                student_id = data.get("student_id")
+
+                query = f"DELETE FROM student_info WHERE student_id={student_id};"
+
+                conn = create_conn()
+                cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+
+                cur.execute(query)
+                cur.close()
+                conn.close()
+
+            else:
+                return jsonify({"message": f"Missing student_id."})
+
     # ========== UPDATE RECORD ENDPOINT ==========
     @app.route("/update_data", methods=["POST"])
     @login_required(role_required=["administrator", "editor"])
