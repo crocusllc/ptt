@@ -9,7 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const getFullRecordLink = (params) => {
-  return <a href={`/student-records/${params.row.id}`} title="View student full record">View Full Record</a>;
+  return <a href={`/student-records/${params.row.student_id}`} title="View student full record">View Full Record</a>;
 };
 export default function StudentRecordsPage() {
   // Getting user session data.
@@ -75,11 +75,6 @@ export default function StudentRecordsPage() {
   })
 
   const gridColumns = [
-    {
-      field: 'id',
-      headerName: 'Student ID',
-      width: 90,
-    },
     ...orderedGridColumn.map( field => ({
       field: field['CSV column name'],
       headerName: field['Data element label'],
@@ -110,8 +105,9 @@ export default function StudentRecordsPage() {
             </Box>
             <Box sx={{ height: (numberRows * 58), width: '100%' }}>
               <DataGrid
-                rows={studentRecords}
                 columns={gridColumns}
+                rows={studentRecords}
+                getRowId={(row) => row.student_id}
                 initialState={{
                   pagination: {
                     paginationModel: {

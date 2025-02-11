@@ -87,7 +87,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-5:
-        Category: additional_student_info
+        Category: program_info
         Order within category: 1
         Data element label: "Language(s) Spoken Other Than English"
         CSV column name: "focus_languages"
@@ -102,7 +102,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-6:
-        Category: additional_student_info
+        Category: program_info
         Order within category: 2
         Data element label: "If you selected other, please specify"
         CSV column name: "other_languages"
@@ -117,7 +117,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-7:
-        Category: additional_student_info
+        Category: program_info
         Order within category': 3
         Data element label: 'First Generation Status'
         CSV column name: first_generation_status
@@ -132,7 +132,7 @@ fields:
         Use as filter on Download page?: false
         Include in download file: true
       field-8:
-        Category: additional_student_info
+        Category: program_info
         Order within category': 4
         Data element label: 'Licensure #'
         CSV column name: licensure_number
