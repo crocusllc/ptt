@@ -5,10 +5,8 @@ import { DataGrid } from '@mui/x-data-grid';
 import getConfigData from "@/app/utils/getConfigs"
 import {useEffect, useState} from "react";
 import {useAuth} from "@/app/utils/contexts/AuthProvider";
-import {Button} from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
-import {sort} from "next/dist/build/webpack/loaders/css-loader/src/utils";
 
 const getFullRecordLink = (params) => {
   return <a href={`/student-records/${params.row.id}`} title="View student full record">View Full Record</a>;
