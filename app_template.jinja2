@@ -339,6 +339,8 @@ def create_app():
                     return jsonify({"message": f"The student_id {student_id} data was delete successfully."})
             else:
                 return jsonify({"message": f"Missing student_id."})
+        
+        return jsonify({"message": f"Missing params."})
 
     # ========== UPDATE RECORD ENDPOINT ==========
     @app.route("/update_data", methods=["POST"])
