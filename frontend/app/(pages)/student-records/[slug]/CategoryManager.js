@@ -71,8 +71,8 @@ export default function CategoryManager({displayData, formData, config, tableKey
           }
           {
             displayData && (
-              Object.keys(displayData)?.map( (el, i) => {
-                const fieldDef = formData.filter( field => field['CSV column name'] === el)[0];
+              (formData)?.map( (el, i) => {
+                const fieldDef = Object.keys(displayData).filter( field => el['CSV column name'] === field)[0];
                 if(fieldDef) {
                   return(
                     <Stack spacing={1} key={i}>
@@ -87,8 +87,8 @@ export default function CategoryManager({displayData, formData, config, tableKey
                         }
                       </Stack>
                       <Stack spacing={2} key={i} direction={"row"} >
-                        <Box className={"label"}>{ fieldDef['Data element label'] }: </Box>
-                        <Box className={"value"}>{displayData[el]}</Box>
+                        <Box className={"label"}>{ el['Data element label'] }: </Box>
+                        <Box className={"value"}>{displayData[el['CSV column name']]}</Box>
                       </Stack>
                     </Stack>
                   )
