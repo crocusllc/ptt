@@ -323,18 +323,20 @@ def create_app():
         data = request.get_json() or {}
 
         if (data != {}):
-            if 'student_id' in data:
-                student_id = data.get("student_id")
+            if 'student_id' in data and isinstance(data.get("student_id"), list):
+                student_ids = data.get("student_id")
 
-                query = f"DELETE FROM student_info WHERE student_id={student_id};"
+                for student_id in student_ids:
+                    conn = create_conn()
+                    cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+                    
+                    query = f"DELETE FROM student_info WHERE student_id={student_id};"
+                    cur.execute(query)
 
-                conn = create_conn()
-                cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
-
-                cur.execute(query)
-                cur.close()
-                conn.close()
-
+                    cur.close()
+                    conn.close()
+                    
+                    return jsonify({"message": f"The student_id {student_id} data was delete successfully."})
             else:
                 return jsonify({"message": f"Missing student_id."})
 
