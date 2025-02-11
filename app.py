@@ -277,10 +277,10 @@ def create_app():
 
             conditions = ' AND '.join([f'lower({key}) like lower(\'%{fields_not_date[key]}%\')' for key in fields_not_date])
 
-            query_all = f'SELECT * FROM student_info s JOIN clinical_placements c ON s.id=c.student_id JOIN program_info p ON s.id=p.student_id WHERE {conditions} {start_date} {end_date} {exit_date};'
+            query_all = f'SELECT * FROM student_info s JOIN clinical_placements c ON s.student_id=c.student_id JOIN program_info p ON s.student_id=p.student_id WHERE {conditions} {start_date} {end_date} {exit_date};'
             query_all = query_all.replace("WHERE AND", "WHERE")
         else:
-            query_all = f'SELECT * FROM student_info s JOIN clinical_placements c ON s.id=c.student_id JOIN program_info p ON s.id=p.student_id;'
+            query_all = f'SELECT * FROM student_info s JOIN clinical_placements c ON s.student_id=c.student_id JOIN program_info p ON s.student_id=p.student_id;'
 
         conn = create_conn()
         cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
@@ -372,7 +372,7 @@ def create_app():
             conn.close()
 
     # ========== STUDENT RECORD ENDPOINT ==========
-    @app.route("/student_record_info", methods=["GET", "POST", "PATCH"])
+    @app.route("/student_record_info", methods=["GET", "POST"])
     @login_required(role_required=["administrator", "editor", "viewer"])
     def student_record():
         conn = create_conn()
@@ -384,7 +384,7 @@ def create_app():
             if (data != {}):
                 student_id = data.get("student_id")
 
-                cur.execute("SELECT * from student_info where id=%s;", (student_id,))
+                cur.execute("SELECT * from student_info where student_id=%s;", (student_id,))
                 result = cur.fetchone()
 
                 if result is not None:
