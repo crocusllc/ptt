@@ -139,7 +139,7 @@ def create_sql_files(fields):
     # Generate SQL scripts
     sql_statements = {}
     for table_name, columns in tables.items():
-        sql_statements[table_name] = f"""CREATE TABLE {table_name} ({'student_id SERIAL PRIMARY KEY,' if table_name == 'student_info' else 'id SERIAL PRIMARY KEY, '}{",".join(columns)});"""
+        sql_statements[table_name] = f"""CREATE TABLE {table_name} ({'student_id SERIAL PRIMARY KEY,' if table_name == 'student_info' else 'id SERIAL PRIMARY KEY, '}{'student_id INTEGER, ' if table_name != 'student_info' else ''}{",".join(columns)});"""
 
         if table_name != 'student_info':
             sql_statements[table_name] += f"""ALTER TABLE {table_name} ADD CONSTRAINT {table_name}_fk_1 FOREIGN KEY (student_id) REFERENCES student_info(student_id);"""
