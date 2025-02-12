@@ -95,12 +95,12 @@ export default function StudentRecordPage() {
                   </Box>
                   {
                     (categories[catKey]?.addable) && (
-                      <CategoryManager formData={formCategories[catKey]} config={categories[catKey]} tableKey={catKey} studentId={slug} addable={categories[catKey]?.addable}/>
+                      <CategoryManager formData={formCategories[catKey]} config={categories[catKey]} tableKey={catKey} studentId={slug} addable={categories[catKey]?.addable} onFetch={()=>setLoadData(true)} />
                     )
                   }
                   {
-                    studentRecordData[catKey === "additional_student_info" ? "student_info" : catKey].map( (item, i) => {
-                      const isMultiple = studentRecordData[catKey === "additional_student_info" ? "student_info" : catKey].length > 1;
+                    studentRecordData[catKey === "additional_student_info" ? "program_info" : catKey].map( (item, i) => {
+                      const isMultiple = studentRecordData[catKey === "additional_student_info" ? "program_info" : catKey].length > 1;
                       return (
                         <Stack key={i} sx={{ border: `${ isMultiple ? "1px solid #ccc" : "none" }`, borderRadius: "4px", position:"relative", padding:`${ isMultiple ? "10px" : 0 }` }}>
                           <CategoryManager displayData={item} formData={formCategories[catKey]} config={categories[catKey]} tableKey={catKey} studentId={slug} onFetch={()=>setLoadData(true)}/>

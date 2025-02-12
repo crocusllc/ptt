@@ -70,11 +70,11 @@ def create_csv(fields):
             student_headers.append(field[0])
             clinical_headers.append(field[0])
             additional_headers.append(field[0])
-        elif field[1] == 'Student IHE Enrollment Information':
+        elif field[1] == 'student_info':
             student_headers.append(field[0])
-        elif field[1] == 'Culminating Clinical Placement':
+        elif field[1] == 'clinical_placements':
             clinical_headers.append(field[0])
-        elif field[1] == 'Additional Program Information' or 'Additional Student Information':
+        elif field[1] == 'program_info' or 'additional_student_info':
             additional_headers.append(field[0])
     filenames = ['student_data.csv', 'clinical_placement_data.csv', 'additional_program_student_data.csv']
     headers = [student_headers, clinical_headers, additional_headers]
@@ -114,7 +114,7 @@ def create_sql_files(fields):
 
     # Map categories to tables
     category_to_table = {
-        "additional_student_info": "student_info",
+        "additional_student_info": "program_info",
         "student_info": "student_info",
         "program_info": "program_info",
         "clinical_placements": "clinical_placements"

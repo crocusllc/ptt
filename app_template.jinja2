@@ -356,7 +356,7 @@ def create_app():
 
             # Map source to tables
             source_to_table = {
-                "additional_student_data": "student_info",
+                "additional_student_data": "program_info",
                 "student": "student_info",
                 "additional_program_data": "program_info",
                 "clinical": "clinical_placements"
@@ -370,21 +370,38 @@ def create_app():
             for key in to_update:
                 if to_update[key] is None:
                     to_update.pop(key, None)
+            
+            def with_values(key):
+                return '\'' if to_update[key] != '' else ''
+
+            def value_or_null(key):
+                return to_update[key] if to_update[key] != '' else 'NULL'
 
             conn = create_conn()
             cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
-            if id is not None or student_id is not None:
-                set_values = ', '.join(f'{key} = \'{to_update[key]}\'' for key in to_update)
+            if id is not None and student_id is not None:
+                set_values = ', '.join(f'{key} = {with_values(key)}{value_or_null(key)}{with_values(key)}' for key in to_update)
 
-            if source_to_table[source] != 'student_info':
-                query = f'UPDATE {source_to_table[source]} SET {set_values} WHERE id = {id};'
-                cur.execute(query)
-                conn.commit()
+                if source_to_table[source] != 'student_info':
+                    query = f'UPDATE {source_to_table[source]} SET {set_values} WHERE id = {id};'
+                    cur.execute(query)
+                    conn.commit()
 
-                return jsonify({"message": f"The record was updated successfully."})
-            else:
-                query = f'UPDATE {source_to_table[source]} SET {set_values} WHERE student_id = {student_id};'
+                    return jsonify({"message": f"The record was updated successfully."})
+                else:
+                    query = f'UPDATE {source_to_table[source]} SET {set_values} WHERE student_id = {student_id};'
+                    cur.execute(query)
+                    conn.commit()
+
+                    return jsonify({"message": f"The record was created successfully."})
+
+            if id is None:
+                columns = ', '.join([f'{key}' for key in to_update])
+                values = ', '.join([f'{with_values(key)}{value_or_null(key)}{with_values(key)}' for key in to_update])
+
+                query = f'INSERT INTO {source_to_table[source]}(student_id, {columns}) VALUES ({student_id},{values});'
+
                 cur.execute(query)
                 conn.commit()
 

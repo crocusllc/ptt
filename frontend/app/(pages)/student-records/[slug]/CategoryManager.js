@@ -47,6 +47,7 @@ export default function CategoryManager({displayData, formData, config, tableKey
       const res = await response.json();
       // Passing the form data modified to
       setEditMode(false);
+      setAddMonde(false);
       onFetch && onFetch();
 
     } catch (error) {
