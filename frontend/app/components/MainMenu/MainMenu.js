@@ -11,7 +11,7 @@ import {useAuth} from "@/app/utils/contexts/AuthProvider";
 export default function MainMenu() {
   const pathname = usePathname();
   const { userSession } = useAuth();
-  const allowed = userSession && userSession.user?.role !== 'viewer'
+  const allowed = userSession && userSession.user?.role === 'administrator'
 
   const menuItems = [
     { href: "/", icon: <HomeIcon />, label: "Home" },

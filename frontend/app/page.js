@@ -24,7 +24,7 @@ const HomeMenuItem = ({ href, label, ariaLabel, show }) => {
 };
 export default function Home() {
   const { userSession } = useAuth();
-  const allowed = userSession && userSession.user?.role !== 'viewer';
+  const allowed = userSession && userSession.user?.role === 'administrator';
   const [requestPass, setRequestPass] = useState(true);
   useEffect(()=> {
     if(userSession?.user?.require_pass) {

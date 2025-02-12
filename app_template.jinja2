@@ -177,7 +177,7 @@ def create_app():
 
     # ========== FILE UPLOAD ENDPOINT ==========
     @app.route("/file_upload", methods=["POST"])
-    @login_required(role_required=["administrator", "editor"])
+    @login_required(role_required=["administrator"])
     def file_upload():
         data = request.get_data()
         json_str = data.decode('utf-8')
@@ -238,7 +238,7 @@ def create_app():
 
     # ========== FILE DOWNLOAD ENDPOINT ==========
     @app.route("/file_download", methods=["POST"])
-    @login_required(role_required=["administrator", "editor"])
+    @login_required(role_required=["administrator"])
     def file_download():
         data = request.get_json() or {}
         file_name = data.get("file_name")
