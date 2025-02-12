@@ -15,7 +15,7 @@ export default auth((req) => {
     // Viewer disallowed paths.
     const notAllowedPaths = {
       administrator: [],
-      editor: [],
+      editor: ['/data-download', '/data-upload'],
       viewer: ['/data-download', '/data-upload'],
     };
 
@@ -25,7 +25,6 @@ export default auth((req) => {
     );
 
     if (notAllowed) {
-      // console.log('NOT ALLOWED');
       const newUrl = new URL("/unauthorized", req.nextUrl.origin); // Redirect to unauthorized page
       return Response.redirect(newUrl);
     }

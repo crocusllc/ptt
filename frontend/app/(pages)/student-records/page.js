@@ -7,7 +7,6 @@ import React, {useEffect, useState} from "react";
 import {useAuth} from "@/app/utils/contexts/AuthProvider";
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
-import {Button} from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import {CloseIcon} from "next/dist/client/components/react-dev-overlay/internal/icons/CloseIcon";
@@ -133,18 +132,22 @@ export default function StudentRecordsPage() {
       {
         studentRecords && (
           <>
-            <Box sx={{textAlign: "right"}}>
-              <IconButton
-                aria-label="delete records"
-                title={"Delete records"}
-                size="large"
-                color="primary"
-                disabled={!selectedRows.length > 0}
-                onClick={deleteStudentRecord}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Box>
+            {
+              userSession.user.role !== 'viewer' && (
+                <Box sx={{textAlign: "right"}}>
+                  <IconButton
+                    aria-label="delete records"
+                    title={"Delete records"}
+                    size="large"
+                    color="primary"
+                    disabled={!selectedRows.length > 0}
+                    onClick={deleteStudentRecord}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Box>
+              )
+            }
             <Box sx={{ height: (numberRows * 58), width: '100%' }}>
               <DataGrid
                 columns={gridColumns}
