@@ -356,7 +356,7 @@ def create_app():
 
             # Map source to tables
             source_to_table = {
-                "additional_student_data": "student_info",
+                "additional_student_data": "program_info",
                 "student": "student_info",
                 "additional_program_data": "program_info",
                 "clinical": "clinical_placements"

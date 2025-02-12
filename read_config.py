@@ -114,7 +114,7 @@ def create_sql_files(fields):
 
     # Map categories to tables
     category_to_table = {
-        "additional_student_info": "student_info",
+        "additional_student_info": "program_info",
         "student_info": "student_info",
         "program_info": "program_info",
         "clinical_placements": "clinical_placements"
