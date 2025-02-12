@@ -7,7 +7,7 @@ import {useAuth} from "@/app/utils/contexts/AuthProvider";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 export default function CategoryManager({displayData, formData, config, tableKey, studentId, onFetch, addable}) {
-
+  console.log(displayData)
   const { userSession } = useAuth();
   const [editMode, setEditMode] = useState(false);
   const [addMode, setAddMonde] = useState(false)

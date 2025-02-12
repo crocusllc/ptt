@@ -3,11 +3,16 @@
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import getConfigData from "@/app/utils/getConfigs"
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useAuth} from "@/app/utils/contexts/AuthProvider";
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {Button} from "@mui/material";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import {CloseIcon} from "next/dist/client/components/react-dev-overlay/internal/icons/CloseIcon";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
 
 const getFullRecordLink = (params) => {
   return <a href={`/student-records/${params.row.student_id}`} title="View student full record">View Full Record</a>;
@@ -16,6 +21,8 @@ export default function StudentRecordsPage() {
   // Getting user session data.
   const [studentRecords, setStudentRecords] = useState();
   const [selectedRows, setSelectedRows] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [uploadResponse, setUploadResponse] = useState()
 
   const handleRowSelection = (rowSelectionModel) => {
     setSelectedRows(rowSelectionModel); // rowSelectionModel contains IDs of selected rows
@@ -109,7 +116,9 @@ export default function StudentRecordsPage() {
         setStudentRecords(filteredStudents);
       }
 
-      return await response.json();
+      const result = await response.json();
+      setUploadResponse(result);
+      setOpen(true);
 
     } catch (error) {
       console.error("Error fetching student record info:", error.message);
@@ -154,8 +163,44 @@ export default function StudentRecordsPage() {
                 onRowSelectionModelChange={handleRowSelection}
               />
             </Box>
-            <Button onClick={()=> console.log(selectedRows)}>Log Rows</Button>
-            <Button onClick={()=> console.log(studentRecords)}>Data</Button>
+            <Dialog
+              open={open}
+              onClose={()=> setOpen(false)}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+              sx={{
+                "& .MuiDialog-container": {
+                  "& .MuiPaper-root": {
+                    width: "100%",
+                    maxWidth: "460px",
+                    minHeight: "200px"
+                  },
+                },
+              }}
+            >
+              <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+                Upload response:
+              </DialogTitle>
+              <IconButton
+                aria-label="close"
+                onClick={()=> setOpen(false)}
+                sx={(theme) => ({
+                  position: 'absolute',
+                  right: 8,
+                  top: 8,
+                  color: theme.palette.grey[500],
+                })}
+              >
+                <CloseIcon />
+              </IconButton>
+              <DialogContent dividers>
+                <DialogContentText id="alert-dialog-description">
+                  {
+                    uploadResponse?.message
+                  }
+                </DialogContentText>
+              </DialogContent>
+            </Dialog>
           </>
         )
       }
