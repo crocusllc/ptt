@@ -197,7 +197,7 @@ fields:
         Order within category: 4
         Data element label: 'Placement End Date'
         CSV column name: placement_end_date
-        Type: 'date'
+        Type: date
         Validation required: true
         Dropdown or validation values: "N/A"
         multi-select: false
