@@ -400,7 +400,7 @@ def create_app():
                 columns = ', '.join([f'{key}' for key in to_update])
                 values = ', '.join([f'{with_values(key)}{value_or_null(key)}{with_values(key)}' for key in to_update])
 
-                query = f'INSERT INTO {source_to_table[source]}({columns}) VALUES ({values});'
+                query = f'INSERT INTO {source_to_table[source]}(student_id, {columns}) VALUES ({student_id},{values});'
 
                 cur.execute(query)
                 conn.commit()
