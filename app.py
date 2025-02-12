@@ -377,18 +377,18 @@ def create_app():
             if id is not None and student_id is not None:
                 set_values = ', '.join(f'{key} = \'{to_update[key]}\'' for key in to_update)
 
-            if source_to_table[source] != 'student_info' and id is not None:
-                query = f'UPDATE {source_to_table[source]} SET {set_values} WHERE id = {id};'
-                cur.execute(query)
-                conn.commit()
+                if source_to_table[source] != 'student_info':
+                    query = f'UPDATE {source_to_table[source]} SET {set_values} WHERE id = {id};'
+                    cur.execute(query)
+                    conn.commit()
 
-                return jsonify({"message": f"The record was updated successfully."})
-            else:
-                query = f'UPDATE {source_to_table[source]} SET {set_values} WHERE student_id = {student_id};'
-                cur.execute(query)
-                conn.commit()
+                    return jsonify({"message": f"The record was updated successfully."})
+                else:
+                    query = f'UPDATE {source_to_table[source]} SET {set_values} WHERE student_id = {student_id};'
+                    cur.execute(query)
+                    conn.commit()
 
-                return jsonify({"message": f"The record was created successfully."})
+                    return jsonify({"message": f"The record was created successfully."})
 
             if id is None:
                 columns = ', '.join([f'{key}' for key in to_update])
