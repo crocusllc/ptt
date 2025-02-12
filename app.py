@@ -177,7 +177,7 @@ def create_app():
 
     # ========== FILE UPLOAD ENDPOINT ==========
     @app.route("/file_upload", methods=["POST"])
-    @login_required(role_required=["administrator", "editor"])
+    @login_required(role_required=["administrator"])
     def file_upload():
         data = request.get_data()
         json_str = data.decode('utf-8')
@@ -238,7 +238,7 @@ def create_app():
 
     # ========== FILE DOWNLOAD ENDPOINT ==========
     @app.route("/file_download", methods=["POST"])
-    @login_required(role_required=["administrator", "editor"])
+    @login_required(role_required=["administrator"])
     def file_download():
         data = request.get_json() or {}
         file_name = data.get("file_name")
@@ -385,6 +385,17 @@ def create_app():
                 return jsonify({"message": f"The record was updated successfully."})
             else:
                 query = f'UPDATE {source_to_table[source]} SET {set_values} WHERE student_id = {student_id};'
+                cur.execute(query)
+                conn.commit()
+
+                return jsonify({"message": f"The record was created successfully."})
+
+            if id is None:
+                columns = ', '.join([f'{key}' for key in to_update])
+                values = ', '.join([f'\'{to_update[key]}\'' for key in to_update])
+
+                query = f'INSERT INTO {source_to_table[source]}({columns}) VALUES (values);'
+
                 cur.execute(query)
                 conn.commit()
 

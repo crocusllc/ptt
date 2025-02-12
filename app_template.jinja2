@@ -390,6 +390,17 @@ def create_app():
 
                 return jsonify({"message": f"The record was created successfully."})
 
+            if id is None:
+                columns = ', '.join([f'{key}' for key in to_update])
+                values = ', '.join([f'\'{to_update[key]}\'' for key in to_update])
+
+                query = f'INSERT INTO {source_to_table[source]}({columns}) VALUES (values);'
+
+                cur.execute(query)
+                conn.commit()
+
+                return jsonify({"message": f"The record was created successfully."})
+
             cur.close()
             conn.close()
 
