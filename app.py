@@ -370,12 +370,18 @@ def create_app():
             for key in to_update:
                 if to_update[key] is None:
                     to_update.pop(key, None)
+            
+            def with_values(key):
+                return '\'' if to_update[key] != '' else ''
+
+            def value_or_null(key):
+                return to_update[key] if to_update[key] != '' else 'NULL'
 
             conn = create_conn()
             cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
             if id is not None and student_id is not None:
-                set_values = ', '.join(f'{key} = \'{to_update[key]}\'' for key in to_update)
+                set_values = ', '.join(f'{key} = {with_values(key)}{value_or_null(key)}{with_values(key)} for key in to_update)
 
                 if source_to_table[source] != 'student_info':
                     query = f'UPDATE {source_to_table[source]} SET {set_values} WHERE id = {id};'
@@ -392,9 +398,9 @@ def create_app():
 
             if id is None:
                 columns = ', '.join([f'{key}' for key in to_update])
-                values = ', '.join([f'\'{to_update[key]}\'' for key in to_update])
+                values = ', '.join([f'{with_values(key)}{value_or_null(key)}{with_values(key)}' for key in to_update])
 
-                query = f'INSERT INTO {source_to_table[source]}({columns}) VALUES (values);'
+                query = f'INSERT INTO {source_to_table[source]}({columns}) VALUES ({values});'
 
                 cur.execute(query)
                 conn.commit()
