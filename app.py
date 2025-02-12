@@ -332,13 +332,16 @@ def create_app():
                     
                     query = f"DELETE FROM student_info WHERE student_id={student_id};"
                     cur.execute(query)
+                    conn.commit()
 
                     cur.close()
                     conn.close()
                     
-                    return jsonify({"message": f"The student_id {student_id} data was delete successfully."})
+                return jsonify({"message": f"The student_ids {list(student_ids)} data was delete successfully."})
             else:
                 return jsonify({"message": f"Missing student_id."})
+        
+        return jsonify({"message": f"Missing params."})
 
     # ========== UPDATE RECORD ENDPOINT ==========
     @app.route("/update_data", methods=["POST"])
@@ -371,22 +374,17 @@ def create_app():
             conn = create_conn()
             cur = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
-            if id is not None :
+            if id is not None or student_id is not None:
                 set_values = ', '.join(f'{key} = \'{to_update[key]}\'' for key in to_update)
 
-                query = f'UPDATE {source_to_table[source]} SET {set_values} WHERE id = {id}'
-
+            if source_to_table[source] != 'student_info':
+                query = f'UPDATE {source_to_table[source]} SET {set_values} WHERE id = {id};'
                 cur.execute(query)
                 conn.commit()
 
-                return jsonify({"message": f"The student_id {student_id} was update successfully."})
-            
-            if id is None:
-                columns = ', '.join([f'{key}' for key in to_update])
-                values = ', '.join([f'\'{to_update[key]}\'' for key in to_update])
-
-                query = f'INSERT INTO {source_to_table[source]}({columns}) VALUES ({values});'
-
+                return jsonify({"message": f"The record was updated successfully."})
+            else:
+                query = f'UPDATE {source_to_table[source]} SET {set_values} WHERE student_id = {student_id};'
                 cur.execute(query)
                 conn.commit()
 
