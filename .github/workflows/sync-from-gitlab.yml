@@ -40,6 +40,6 @@ jobs:
       - name: Sync dev
         run: |
           git fetch gitlab dev
-          git checkout dev
+          git checkout --track origin/dev || git checkout dev
           git merge gitlab/dev --ff-only
           git push origin dev
