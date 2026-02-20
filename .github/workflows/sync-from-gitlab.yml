@@ -18,7 +18,14 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.GITLAB_SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan indava.dev >> ~/.ssh/known_hosts
+          ssh-keyscan -p 2222 www.indava.dev >> ~/.ssh/known_hosts
+          cat >> ~/.ssh/config <<EOL
+          Host indava.dev
+            HostName www.indava.dev
+            Port 2222
+            User git
+            IdentityFile ~/.ssh/id_ed25519
+          EOL
 
       - name: Add GitLab remote
         run: git remote add gitlab git@indava.dev:indava-people/ptt.git
